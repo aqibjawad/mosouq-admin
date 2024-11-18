@@ -1,0 +1,18 @@
+.responsive-image-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .responsive-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  @media (max-width: 768px) {
+    .responsive-image {
+      max-width: 100%;
+      height: auto;
+    }
+  }

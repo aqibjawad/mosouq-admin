@@ -1,0 +1,12 @@
+/* Custom styles for the toast container */
+.custom-toast-container {
+    background-color: #3498db; /* Change to your desired background color */
+    color: #fff; /* Change to your desired text color */
+  }
+  
+  /* Custom styles for the toast message */
+  .custom-toast-message {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  

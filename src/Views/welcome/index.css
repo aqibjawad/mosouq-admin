@@ -1,0 +1,37 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  text-align: center;
+}
+
+.login-button {
+  background-color: #404EED;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  margin-top: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 20px;
+  margin-top: 4rem;
+}
+
+.welcome-tag{
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: -1rem;
+}
+
+.welcome{
+    font-weight: 800;
+    font-size: 50px;
+}

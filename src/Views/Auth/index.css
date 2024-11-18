@@ -1,0 +1,158 @@
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.signin {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.sign-header {
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 48px;
+  text-align: center;
+}
+
+.signin form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signin input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.signin-button {
+  padding: 0.75rem;
+  background-color: #404eed;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.signin-button:hover {
+  background-color: #3038a0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input,
+select {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+input:focus,
+select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+button {
+  padding: 0.75rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.otp-code-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.otp-code-input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Styling for the OTP method select dropdown */
+.otp-method-select {
+  appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-down'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2rem;
+}
+
+.react-phone-number-input {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.react-phone-number-input input {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+  margin-bottom: 0; /* Override margin */
+}
+
+.react-phone-number-input .react-phone-number-input__input {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.react-phone-number-input__country-select {
+  padding-right: 2rem;
+}
+
+@media (max-width: 480px) {
+  .signin {
+    padding: 1.5rem;
+  }
+
+  .signin {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+}
