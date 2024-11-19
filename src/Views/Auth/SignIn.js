@@ -121,7 +121,8 @@ const Login = () => {
         password: passwordRef.current.value,
       };
       const result = await axios.post(
-        `http://localhost:5000/api/user/login-admin`,
+        // `http://localhost:5000/api/user/login-admin`,
+        `https://apis.mosouq.ae/api/user/login-admin`,
         formData
       );
       if (check === 0) {
