@@ -7,6 +7,8 @@ import "./index.css";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
+import AddressPicker from "../../Components/addressPicker";
+
 const ProfileForm = () => {
   const token = localStorage.getItem("token");
   const data = jwtDecode(token);
@@ -20,6 +22,10 @@ const ProfileForm = () => {
     "https://via.placeholder.com/150"
   );
 
+  const [address, setAddress] = useState("");
+  const [lang, setLongitude] = useState("");
+  const [lat, setLatitude] = useState("");
+
   const [formData, setFormData] = useState({
     category: "",
     subcategory: "",
@@ -29,7 +35,7 @@ const ProfileForm = () => {
     city: "",
     zip: "",
     address: "",
-    country: "",
+    country: "UAE",
     businessId: "",
     logo: "",
     description: "",
@@ -38,6 +44,8 @@ const ProfileForm = () => {
     fromTime: "",
     toTime: "",
     location: "",
+    lang: "",
+    lat: "",
   });
 
   useEffect(() => {
@@ -104,6 +112,13 @@ const ProfileForm = () => {
     }));
   };
 
+  const handleSubCategoryChange = (selectedOption) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      subcategory: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
   const handleContinueProfile = () => setCurrentSection(2);
   const handleContinue = () => setCurrentSection(3);
   const handleContinueDescription = () => setCurrentSection(4);
@@ -117,7 +132,7 @@ const ProfileForm = () => {
     name: "",
     company: "",
     email: "",
-    country: "",
+    country: "UAE",
     phone: "",
     role: "business",
   });
@@ -533,6 +548,33 @@ const ProfileForm = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const handlePlaceSelected = (place) => {
+    if (place) {
+      // Set the formatted address in the input field
+      const formattedAddress = place.formatted_address || place.name || "";
+
+      // Update state for address, latitude, and longitude
+      setAddress(formattedAddress);
+
+      // Safely extract latitude and longitude
+      if (place.geometry?.location) {
+        const longitude = place.geometry.location.lng();
+        const latitude = place.geometry.location.lat();
+
+        // Convert to string and update state
+        setLongitude(longitude.toString());
+        setLatitude(latitude.toString());
+      }
+
+      // Optional: Log for debugging
+      console.log("Selected Place:", {
+        address: formattedAddress,
+        lat: place.geometry?.location?.lat(),
+        lng: place.geometry?.location?.lng(),
+      });
+    }
+  };
+
   return (
     <div className="main-profile-head mt-5">
       {currentSection === 1 && (
@@ -604,7 +646,7 @@ const ProfileForm = () => {
               </Col>
             </Row>
 
-            <Row>
+            {/* <Row>
               <Col lg={6} md={6} sm={12} className="mt-4">
                 <label htmlFor="country" style={labelStyle}>
                   Country
@@ -634,7 +676,7 @@ const ProfileForm = () => {
                   ))}
                 </select>
               </Col>
-            </Row>
+            </Row> */}
           </form>
 
           <Row>
@@ -657,6 +699,7 @@ const ProfileForm = () => {
       {currentSection === 2 && (
         <>
           <Row className="mt-5 justify-content-center">
+            {/* Image section here */}
             <Row>
               <Col
                 md={6}
@@ -702,6 +745,23 @@ const ProfileForm = () => {
                     ) || null
                   }
                   onChange={handleCategoryChange}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group>
+                <Form.Label>Sub Category</Form.Label>
+                <Select
+                  options={subCategoryOptions}
+                  placeholder="Select Sub Category"
+                  required
+                  value={
+                    subCategoryOptions.find(
+                      (option) => option.value === formData.subcategory
+                    ) || null
+                  }
+                  onChange={handleSubCategoryChange}
                 />
               </Form.Group>
             </Col>
@@ -823,7 +883,7 @@ const ProfileForm = () => {
                 <label htmlFor="zip" className="label">
                   Zip
                 </label>
-                <input
+                {/* <input
                   type="text"
                   name="zip"
                   id="zip"
@@ -832,13 +892,14 @@ const ProfileForm = () => {
                   value={formData.zip}
                   onChange={handleInputChange}
                   required
-                />
+                /> */}
+                <AddressPicker onPlaceSelected={handlePlaceSelected} />
               </div>
             </Col>
           </Row>
 
           <Row className="mt-2">
-            <Col lg={6}>
+            <Col lg={4}>
               <div>
                 <label htmlFor="address" className="label">
                   Address
@@ -849,25 +910,42 @@ const ProfileForm = () => {
                   id="address"
                   placeholder="Enter Address"
                   className="input-field"
-                  value={formData.address}
-                  onChange={handleInputChange}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   required
                 />
               </div>
             </Col>
-            <Col lg={6}>
+            <Col lg={4}>
               <div>
                 <label htmlFor="country" className="label">
-                  Country
+                  Latitude
                 </label>
                 <input
                   type="text"
-                  name="country"
-                  id="country"
-                  placeholder="Enter Country"
+                  name="latitude"
+                  id="latitude"
+                  placeholder="Latitude"
                   className="input-field"
-                  value={formData.country}
-                  onChange={handleInputChange}
+                  value={lat}
+                  onChange={(e) => setLatitude(e.target.value)}
+                  required
+                />
+              </div>
+            </Col>
+            <Col lg={4}>
+              <div>
+                <label htmlFor="country" className="label">
+                  Longitude
+                </label>
+                <input
+                  type="text"
+                  name="longitude"
+                  id="longitude"
+                  placeholder="Longitude"
+                  className="input-field"
+                  value={lang}
+                  onChange={(e) => setLongitude(e.target.value)}
                   required
                 />
               </div>
@@ -905,23 +983,6 @@ const ProfileForm = () => {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={4}
-                  required
-                />
-              </div>
-            </Col>
-            <Col lg={6} className="mt-3">
-              <div>
-                <label htmlFor="description" className="label">
-                  Location
-                </label>
-                <input
-                  type="text"
-                  name="location"
-                  id="location"
-                  placeholder="Enter Your Business Location"
-                  className="input-field"
-                  value={formData.location}
-                  onChange={handleInputChange}
                   required
                 />
               </div>
