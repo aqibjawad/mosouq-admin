@@ -10,6 +10,7 @@ import Select from "react-select";
 import AddressPicker from "../../Components/addressPicker";
 
 const ProfileForm = () => {
+  
   const token = localStorage.getItem("token");
   const data = jwtDecode(token);
 
@@ -157,7 +158,7 @@ const ProfileForm = () => {
       setIsLoading(false);
     }
   };
-
+ 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {

@@ -26,54 +26,99 @@ import {
 import { AiFillDelete } from "react-icons/ai";
 import { BsFillPencilFill } from "react-icons/bs";
 
+import Swal from "sweetalert2";
+
 const SubCategory = () => {
-  const [image, setImage] = useState();
+  const [imagePreview, setImagePreview] = useState(
+    "https://via.placeholder.com/150"
+  );
 
-  // Submit Values
-  const categoryRef = useRef();
-  const descriptionRef = useRef();
+  const [formData, setFormData] = useState({
+    category: "",
+    sub_name: "",
+    subcategory_image: "",
+    description: "",
+  });
 
-  const sub_nameRef = useRef();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+
+      // Create a FormData object for the image
+      const imageFormData = new FormData();
+      imageFormData.append("file", file);
+
+      try {
+        // Send the image to the backend
+        const response = await POST("utils/upload-single-file", imageFormData);
+
+        // Check if the response contains the file URL
+        if (response && response?.data?.image) {
+          // Update the form data with the received image URL
+          setFormData((prevData) => ({
+            ...prevData,
+            subcategory_image: response?.data?.image, // Store the Cloudinary URL
+          }));
+
+          Swal.fire({
+            icon: "success",
+            title: "Image uploaded successfully!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else {
+          throw new Error("Image URL not received from the server");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to upload image. Please try again.",
+        });
+      }
+    }
+  };
 
   const submit = async (event) => {
     event.preventDefault();
 
-    if (!sub_nameRef.current.value) {
-      toast.error("Category Name field is required.", {
-        className: "custom-toast-container",
-        bodyClassName: "custom-toast-message",
-      });
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("sub_name", sub_nameRef.current.value);
-    formData.append("category", categoryRef.current.value);
-    formData.append("description", descriptionRef.current.value);
-
-    if (image) {
-      formData.append("subcategory_image", image);
-    }
-
     try {
-      const res = await POST("subcategory/add-subcategory", formData);
+      const payload = {
+        category: formData.category,
+        sub_name: formData.sub_name,
+        subcategory_image: formData.subcategory_image, // This will now have the correct image URL
+        description: formData.description,
+      };
+
+      const res = await POST("subcategory/add-subcategory", payload);
       if (!res.error) {
         toast("Added Done");
-
         fetchData();
+        // Reset form after successful submission
+        setFormData({
+          category: "",
+          sub_name: "",
+          subcategory_image: "",
+          description: "",
+        });
+        setImagePreview("https://via.placeholder.com/150");
       } else {
         toast.error(res.sqlMessage);
       }
     } catch (error) {
       console.error("Error adding Sub category:", error);
-      toast.error("Failed to add category. Please try again.");
+      toast.error("Failed to add sub category. Please try again.");
     }
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    console.log("Selected image:", file);
   };
 
   const [category, setCategoryId] = useState([]);
@@ -140,7 +185,9 @@ const SubCategory = () => {
                       <Form.Control
                         className="form-control"
                         as="select"
-                        ref={categoryRef}
+                        name="category" // Add this
+                        onChange={handleInputChange}
+                        value={formData.category}
                       >
                         <option value=""> --- Select --- </option>
                         {categories.map((category) => (
@@ -154,9 +201,11 @@ const SubCategory = () => {
                     <Form.Group className="">
                       <Form.Label> Sub Category</Form.Label>
                       <Form.Control
-                        ref={sub_nameRef}
                         type="text"
                         placeholder="Product"
+                        name="sub_name" // Add this
+                        onChange={handleInputChange}
+                        value={formData.sub_name}
                       />
                     </Form.Group>
                   </Col>
@@ -164,14 +213,20 @@ const SubCategory = () => {
                   <Col md={12}>
                     <Form.Group className="">
                       <Form.Label>Sub Category Description</Form.Label>
-                      <Form.Control ref={descriptionRef} as="textarea" placeholder="Product" />
+                      <Form.Control
+                        as="textarea"
+                        placeholder="Product"
+                        name="description" // Add this
+                        onChange={handleInputChange}
+                        value={formData.description}
+                      />
                     </Form.Group>
                   </Col>
 
                   <Col md={12}>
                     <Form.Group className="">
                       <Form.Label> Image </Form.Label>
-                      <FormControl type="file" onChange={handleFileChange} />
+                      <FormControl type="file" onChange={handleImageChange} />
                     </Form.Group>
                   </Col>
 
