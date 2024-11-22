@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
 import AddressPicker from "../../Components/addressPicker";
+import { Clock } from "lucide-react";
 
 const ProfileForm = () => {
-  
   const token = localStorage.getItem("token");
   const data = jwtDecode(token);
 
@@ -23,6 +23,8 @@ const ProfileForm = () => {
     "https://via.placeholder.com/150"
   );
 
+  const [is24Hours, setIs24Hours] = useState(false);
+
   const [address, setAddress] = useState("");
   const [lang, setLongitude] = useState("");
   const [lat, setLatitude] = useState("");
@@ -34,7 +36,6 @@ const ProfileForm = () => {
     website: "",
     phone: "",
     city: "",
-    zip: "",
     address: "",
     country: "UAE",
     businessId: "",
@@ -44,7 +45,6 @@ const ProfileForm = () => {
     isOpen24_7: "",
     fromTime: "",
     toTime: "",
-    location: "",
     lang: "",
     lat: "",
   });
@@ -158,7 +158,7 @@ const ProfileForm = () => {
       setIsLoading(false);
     }
   };
- 
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -209,22 +209,22 @@ const ProfileForm = () => {
       setIsLoading(true);
 
       // Validate required fields
-      const requiredFields = [
-        "businessName",
-        "website",
-        "email",
-        "phone",
-        "zip",
-        "country",
-        "description",
-      ];
-      const missingFields = requiredFields.filter((field) => !formData[field]);
+      // const requiredFields = [
+      //   "businessName",
+      //   "website",
+      //   "email",
+      //   "phone",
+      //   "zip",
+      //   "country",
+      //   "description",
+      // ];
+      // const missingFields = requiredFields.filter((field) => !formData[field]);
 
-      if (missingFields.length > 0) {
-        throw new Error(
-          `Please fill in all required fields: ${missingFields.join(", ")}`
-        );
-      }
+      // if (missingFields.length > 0) {
+      //   throw new Error(
+      //     `Please fill in all required fields: ${missingFields.join(", ")}`
+      //   );
+      // }
 
       // Create an object to hold the form data
       const formEncodedData = { ...formData };
@@ -554,18 +554,17 @@ const ProfileForm = () => {
       // Set the formatted address in the input field
       const formattedAddress = place.formatted_address || place.name || "";
 
-      // Update state for address, latitude, and longitude
-      setAddress(formattedAddress);
-
-      // Safely extract latitude and longitude
-      if (place.geometry?.location) {
-        const longitude = place.geometry.location.lng();
-        const latitude = place.geometry.location.lat();
-
-        // Convert to string and update state
-        setLongitude(longitude.toString());
-        setLatitude(latitude.toString());
-      }
+      // Update form data with address, latitude, and longitude
+      setFormData((prevData) => ({
+        ...prevData,
+        address: formattedAddress,
+        lat: place.geometry?.location
+          ? place.geometry.location.lat().toString()
+          : "",
+        lang: place.geometry?.location
+          ? place.geometry.location.lng().toString()
+          : "",
+      }));
 
       // Optional: Log for debugging
       console.log("Selected Place:", {
@@ -575,6 +574,53 @@ const ProfileForm = () => {
       });
     }
   };
+
+  const [selectedDays, setSelectedDays] = useState({
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false,
+  });
+
+  const [timeSlots, setTimeSlots] = useState({
+    monday: { from: "", to: "" },
+    tuesday: { from: "", to: "" },
+    wednesday: { from: "", to: "" },
+    thursday: { from: "", to: "" },
+    friday: { from: "", to: "" },
+    saturday: { from: "", to: "" },
+    sunday: { from: "", to: "" },
+  });
+
+  const handleDayToggle = (day) => {
+    setSelectedDays((prev) => ({
+      ...prev,
+      [day]: !prev[day],
+    }));
+  };
+
+  const handleTimeChange = (day, type, value) => {
+    setTimeSlots((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [type]: value,
+      },
+    }));
+  };
+
+  const days = [
+    { key: "monday", label: "Monday" },
+    { key: "tuesday", label: "Tuesday" },
+    { key: "wednesday", label: "Wednesday" },
+    { key: "thursday", label: "Thursday" },
+    { key: "friday", label: "Friday" },
+    { key: "saturday", label: "Saturday" },
+    { key: "sunday", label: "Sunday" },
+  ];
 
   return (
     <div className="main-profile-head mt-5">
@@ -911,8 +957,10 @@ const ProfileForm = () => {
                   id="address"
                   placeholder="Enter Address"
                   className="input-field"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  value={formData.address}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -928,8 +976,10 @@ const ProfileForm = () => {
                   id="latitude"
                   placeholder="Latitude"
                   className="input-field"
-                  value={lat}
-                  onChange={(e) => setLatitude(e.target.value)}
+                  value={formData.lat}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lat: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -945,8 +995,10 @@ const ProfileForm = () => {
                   id="longitude"
                   placeholder="Longitude"
                   className="input-field"
-                  value={lang}
-                  onChange={(e) => setLongitude(e.target.value)}
+                  value={formData.lang}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lang: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -1013,55 +1065,142 @@ const ProfileForm = () => {
             </Col>
           </Row>
           <div className="business-prof-setup-head"> Select Your Hours </div>
-
-          <Row style={{ marginTop: "2rem" }}>
-            <Col md={6}>
-              <Form.Check
-                type="checkbox"
-                label="Selective Hours"
-                checked={isSelectiveHours}
-                onChange={() => setIsSelectiveHours(!isSelectiveHours)}
-              />
+          <Row className="mb-4 text-center">
+            <Col xs={6}>
+              <div className="d-flex flex-column align-items-center">
+                <Form.Check
+                  type="checkbox"
+                  checked={isSelectiveHours}
+                  onChange={() => {
+                    setIsSelectiveHours(!isSelectiveHours);
+                    if (is24Hours) setIs24Hours(false);
+                  }}
+                  id="selective-hours"
+                />
+                <Form.Label htmlFor="selective-hours" className="mt-1">
+                  Selective Hours
+                </Form.Label>
+              </div>
             </Col>
-
-            <Col md={6}>
-              <Form.Check
-                type="checkbox"
-                label="24 Hours"
-                value={formData.isOpen24_7}
-                onChange={handleInputChange}
-              />
+            <Col xs={6}>
+              <div className="d-flex flex-column align-items-center">
+                <Form.Check
+                  type="checkbox"
+                  checked={is24Hours}
+                  onChange={() => {
+                    setIs24Hours(!is24Hours);
+                    if (isSelectiveHours) setIsSelectiveHours(false);
+                  }}
+                  id="24-hours"
+                />
+                <Form.Label htmlFor="24-hours" className="mt-1">
+                  24 Hours
+                </Form.Label>
+              </div>
             </Col>
-
-            {isSelectiveHours && (
-              <Col md={12} style={{ marginTop: "1rem" }}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>From</Form.Label>
-                      <Form.Control
-                        type="time"
-                        name="fromTime"
-                        value={formData.fromTime}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>To</Form.Label>
-                      <Form.Control
-                        type="time"
-                        name="toTime"
-                        value={formData.toTime}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Col>
-            )}
           </Row>
+
+          {isSelectiveHours && (
+            <div>
+              {/* Monday */}
+              <Row className="mb-3 align-items-center border rounded py-3">
+                <Col xs={12} md={3}>
+                  <Form.Check
+                    type="checkbox"
+                    label="Monday"
+                    checked={selectedDays.monday}
+                    onChange={() => handleDayToggle("monday")}
+                    className="fs-5"
+                  />
+                </Col>
+                {selectedDays.monday && (
+                  <Col xs={12} md={9}>
+                    <Row className="align-items-center mt-2 mt-md-0">
+                      <Col xs={5}>
+                        <Form.Group className="d-flex align-items-center">
+                          <span className="me-2">⏰</span>
+                          <Form.Control
+                            type="time"
+                            value={timeSlots.monday.from}
+                            onChange={(e) =>
+                              handleTimeChange("monday", "from", e.target.value)
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xs={2} className="text-center">
+                        <span>to</span>
+                      </Col>
+                      <Col xs={5}>
+                        <Form.Group className="d-flex align-items-center">
+                          <span className="me-2">⏰</span>
+                          <Form.Control
+                            type="time"
+                            value={timeSlots.monday.to}
+                            onChange={(e) =>
+                              handleTimeChange("monday", "to", e.target.value)
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
+              </Row>
+
+              {/* Tuesday */}
+              <Row className="mb-3 align-items-center border rounded py-3">
+                <Col xs={12} md={3}>
+                  <Form.Check
+                    type="checkbox"
+                    label="Tuesday"
+                    checked={selectedDays.tuesday}
+                    onChange={() => handleDayToggle("tuesday")}
+                    className="fs-5"
+                  />
+                </Col>
+                {selectedDays.tuesday && (
+                  <Col xs={12} md={9}>
+                    <Row className="align-items-center mt-2 mt-md-0">
+                      <Col xs={5}>
+                        <Form.Group className="d-flex align-items-center">
+                          <span className="me-2">⏰</span>
+                          <Form.Control
+                            type="time"
+                            value={timeSlots.tuesday.from}
+                            onChange={(e) =>
+                              handleTimeChange(
+                                "tuesday",
+                                "from",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xs={2} className="text-center">
+                        <span>to</span>
+                      </Col>
+                      <Col xs={5}>
+                        <Form.Group className="d-flex align-items-center">
+                          <span className="me-2">⏰</span>
+                          <Form.Control
+                            type="time"
+                            value={timeSlots.tuesday.to}
+                            onChange={(e) =>
+                              handleTimeChange("tuesday", "to", e.target.value)
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
+              </Row>
+
+              {/* Add other days similarly... */}
+            </div>
+          )}
 
           <Row className="mt-5">
             <Col>
