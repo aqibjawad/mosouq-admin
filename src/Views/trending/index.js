@@ -22,6 +22,8 @@ const ProfileForm = () => {
     "https://via.placeholder.com/150"
   );
 
+  const [is24Hours, setIs24Hours] = useState(false);
+
   const [address, setAddress] = useState("");
   const [lang, setLongitude] = useState("");
   const [lat, setLatitude] = useState("");
@@ -1113,7 +1115,7 @@ const ProfileForm = () => {
                       {selectedDays[key] && (
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-gray-500" />
+                            {/* <Clock className="w-4 h-4 text-gray-500" /> */}
                             <input
                               type="time"
                               value={timeSlots[key].from}
@@ -1125,7 +1127,7 @@ const ProfileForm = () => {
                           </div>
                           <span className="text-gray-500">to</span>
                           <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-gray-500" />
+                            {/* <Clock className="w-4 h-4 text-gray-500" /> */}
                             <input
                               type="time"
                               value={timeSlots[key].to}
