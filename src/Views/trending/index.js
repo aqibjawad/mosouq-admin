@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
 import AddressPicker from "../../Components/addressPicker";
-import { Clock } from "lucide-react";
 
 const ProfileForm = () => {
   const token = localStorage.getItem("token");
@@ -22,8 +21,6 @@ const ProfileForm = () => {
   const [imagePreview, setImagePreview] = useState(
     "https://via.placeholder.com/150"
   );
-
-  const [is24Hours, setIs24Hours] = useState(false);
 
   const [address, setAddress] = useState("");
   const [lang, setLongitude] = useState("");
@@ -1065,142 +1062,87 @@ const ProfileForm = () => {
             </Col>
           </Row>
           <div className="business-prof-setup-head"> Select Your Hours </div>
-          <Row className="mb-4 text-center">
-            <Col xs={6}>
-              <div className="d-flex flex-column align-items-center">
-                <Form.Check
+
+          <div className="w-full max-w-2xl mx-auto p-6 space-y-6">
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
                   type="checkbox"
                   checked={isSelectiveHours}
                   onChange={() => {
                     setIsSelectiveHours(!isSelectiveHours);
                     if (is24Hours) setIs24Hours(false);
                   }}
-                  id="selective-hours"
+                  className="w-4 h-4 rounded border-gray-300"
                 />
-                <Form.Label htmlFor="selective-hours" className="mt-1">
-                  Selective Hours
-                </Form.Label>
-              </div>
-            </Col>
-            <Col xs={6}>
-              <div className="d-flex flex-column align-items-center">
-                <Form.Check
+                <span>Selective Hours</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
                   type="checkbox"
                   checked={is24Hours}
                   onChange={() => {
                     setIs24Hours(!is24Hours);
                     if (isSelectiveHours) setIsSelectiveHours(false);
                   }}
-                  id="24-hours"
+                  className="w-4 h-4 rounded border-gray-300"
                 />
-                <Form.Label htmlFor="24-hours" className="mt-1">
-                  24 Hours
-                </Form.Label>
-              </div>
-            </Col>
-          </Row>
-
-          {isSelectiveHours && (
-            <div>
-              {/* Monday */}
-              <Row className="mb-3 align-items-center border rounded py-3">
-                <Col xs={12} md={3}>
-                  <Form.Check
-                    type="checkbox"
-                    label="Monday"
-                    checked={selectedDays.monday}
-                    onChange={() => handleDayToggle("monday")}
-                    className="fs-5"
-                  />
-                </Col>
-                {selectedDays.monday && (
-                  <Col xs={12} md={9}>
-                    <Row className="align-items-center mt-2 mt-md-0">
-                      <Col xs={5}>
-                        <Form.Group className="d-flex align-items-center">
-                          <span className="me-2">⏰</span>
-                          <Form.Control
-                            type="time"
-                            value={timeSlots.monday.from}
-                            onChange={(e) =>
-                              handleTimeChange("monday", "from", e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xs={2} className="text-center">
-                        <span>to</span>
-                      </Col>
-                      <Col xs={5}>
-                        <Form.Group className="d-flex align-items-center">
-                          <span className="me-2">⏰</span>
-                          <Form.Control
-                            type="time"
-                            value={timeSlots.monday.to}
-                            onChange={(e) =>
-                              handleTimeChange("monday", "to", e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </Col>
-                )}
-              </Row>
-
-              {/* Tuesday */}
-              <Row className="mb-3 align-items-center border rounded py-3">
-                <Col xs={12} md={3}>
-                  <Form.Check
-                    type="checkbox"
-                    label="Tuesday"
-                    checked={selectedDays.tuesday}
-                    onChange={() => handleDayToggle("tuesday")}
-                    className="fs-5"
-                  />
-                </Col>
-                {selectedDays.tuesday && (
-                  <Col xs={12} md={9}>
-                    <Row className="align-items-center mt-2 mt-md-0">
-                      <Col xs={5}>
-                        <Form.Group className="d-flex align-items-center">
-                          <span className="me-2">⏰</span>
-                          <Form.Control
-                            type="time"
-                            value={timeSlots.tuesday.from}
-                            onChange={(e) =>
-                              handleTimeChange(
-                                "tuesday",
-                                "from",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xs={2} className="text-center">
-                        <span>to</span>
-                      </Col>
-                      <Col xs={5}>
-                        <Form.Group className="d-flex align-items-center">
-                          <span className="me-2">⏰</span>
-                          <Form.Control
-                            type="time"
-                            value={timeSlots.tuesday.to}
-                            onChange={(e) =>
-                              handleTimeChange("tuesday", "to", e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </Col>
-                )}
-              </Row>
-
-              {/* Add other days similarly... */}
+                <span>24 Hours</span>
+              </label>
             </div>
-          )}
+
+            {isSelectiveHours && (
+              <div className="space-y-4">
+                {days.map(({ key, label }) => (
+                  <div
+                    key={key}
+                    className="border rounded-lg p-4 bg-white shadow-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={selectedDays[key]}
+                          onChange={() => handleDayToggle(key)}
+                          className="w-4 h-4 rounded border-gray-300"
+                        />
+                        <span className="font-medium">{label}</span>
+                      </label>
+
+                      {selectedDays[key] && (
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-gray-500" />
+                            <input
+                              type="time"
+                              value={timeSlots[key].from}
+                              onChange={(e) =>
+                                handleTimeChange(key, "from", e.target.value)
+                              }
+                              className="px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          <span className="text-gray-500">to</span>
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-gray-500" />
+                            <input
+                              type="time"
+                              value={timeSlots[key].to}
+                              onChange={(e) =>
+                                handleTimeChange(key, "to", e.target.value)
+                              }
+                              className="px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <Row className="mt-5">
             <Col>
