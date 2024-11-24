@@ -48,6 +48,71 @@ const ProfileForm = () => {
     lat: "",
   });
 
+  const [selectedDays, setSelectedDays] = useState({
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false,
+  });
+
+  const [timeSlots, setTimeSlots] = useState({
+    monday: { from: "", to: "" },
+    tuesday: { from: "", to: "" },
+    wednesday: { from: "", to: "" },
+    thursday: { from: "", to: "" },
+    friday: { from: "", to: "" },
+    saturday: { from: "", to: "" },
+    sunday: { from: "", to: "" },
+  });
+
+  const handleDayToggle = (day) => {
+    setSelectedDays((prev) => ({
+      ...prev,
+      [day]: !prev[day],
+    }));
+  };
+
+  const handleTimeChange = (day, type, value) => {
+    setTimeSlots((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [type]: value,
+      },
+    }));
+  };
+
+  const days = [
+    { key: "monday", label: "Monday" },
+    { key: "tuesday", label: "Tuesday" },
+    { key: "wednesday", label: "Wednesday" },
+    { key: "thursday", label: "Thursday" },
+    { key: "friday", label: "Friday" },
+    { key: "saturday", label: "Saturday" },
+    { key: "sunday", label: "Sunday" },
+  ];
+
+  useEffect(() => {
+    const businesshours = Object.keys(selectedDays)
+      .filter((day) => selectedDays[day]) // Include only selected days
+      .map((day) => ({
+        day, // Day name (e.g., 'monday')
+        fromTime: timeSlots[day]?.from || "",
+        toTime: timeSlots[day]?.to || "",
+      }));
+  
+    console.log("Generated businesshours:", JSON.stringify(businesshours, null, 2));
+  
+    setFormData((prev) => ({
+      ...prev,
+      businesshours, // Update the businesshours array in formData
+    }));
+  }, [selectedDays, timeSlots]);
+  
+
   useEffect(() => {
     GET(`category/get-categories`).then((result) => {
       const formattedOptions = result.map((category) => ({
@@ -574,53 +639,6 @@ const ProfileForm = () => {
     }
   };
 
-  const [selectedDays, setSelectedDays] = useState({
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
-    sunday: false,
-  });
-
-  const [timeSlots, setTimeSlots] = useState({
-    monday: { from: "", to: "" },
-    tuesday: { from: "", to: "" },
-    wednesday: { from: "", to: "" },
-    thursday: { from: "", to: "" },
-    friday: { from: "", to: "" },
-    saturday: { from: "", to: "" },
-    sunday: { from: "", to: "" },
-  });
-
-  const handleDayToggle = (day) => {
-    setSelectedDays((prev) => ({
-      ...prev,
-      [day]: !prev[day],
-    }));
-  };
-
-  const handleTimeChange = (day, type, value) => {
-    setTimeSlots((prev) => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        [type]: value,
-      },
-    }));
-  };
-
-  const days = [
-    { key: "monday", label: "Monday" },
-    { key: "tuesday", label: "Tuesday" },
-    { key: "wednesday", label: "Wednesday" },
-    { key: "thursday", label: "Thursday" },
-    { key: "friday", label: "Friday" },
-    { key: "saturday", label: "Saturday" },
-    { key: "sunday", label: "Sunday" },
-  ];
-
   return (
     <div className="main-profile-head mt-5">
       {currentSection === 1 && (
@@ -927,7 +945,7 @@ const ProfileForm = () => {
             <Col>
               <div>
                 <label htmlFor="zip" className="label">
-                  Zip
+                  search address
                 </label>
                 {/* <input
                   type="text"
