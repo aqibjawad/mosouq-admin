@@ -372,7 +372,7 @@ const ProfileForm = () => {
             text: "Your profile has been successfully submitted!",
           });
 
-          setCurrentSection(1);
+          navigation("/business-show");
         } else {
           throw new Error("Failed to update business images");
         }

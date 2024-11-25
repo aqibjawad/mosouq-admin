@@ -1,216 +1,202 @@
 import React, { useState, useEffect } from "react";
-import { GET, DELETE } from "../../apicontroller/ApiController"; // Assuming you have these methods in your ApiController
-import { Row, Col, Button, Modal } from "react-bootstrap";
+import { Table, Button, Modal, Form, Container } from "react-bootstrap";
 import { FaTrash, FaEye, FaEdit } from "react-icons/fa";
-
 import { Link } from "react-router-dom";
+import { GET, DELETE } from "../../apicontroller/ApiController";
 
 const BusinessShow = () => {
   const [business, setBusiness] = useState([]);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState(null); // To store selected business for modals
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch business profiles on component mount
   useEffect(() => {
     GET("business-profile/getAll").then((result) => {
       setBusiness(result.businessProfiles);
     });
   }, []);
 
-  // Function to handle delete confirmation
   const handleDeleteConfirm = (businessId) => {
-    setShowDeleteModal(true); // Open delete confirmation modal
-    setSelectedBusiness(businessId); // Set the selected business to delete
+    setShowDeleteModal(true);
+    setSelectedBusiness(businessId);
   };
 
-  // Function to delete business after confirmation
   const handleDelete = () => {
     DELETE(`business-profile/delete/${selectedBusiness}`).then((response) => {
       if (response.success) {
-        setBusiness(business.filter((item) => item.id !== selectedBusiness)); // Update UI
-        setShowDeleteModal(false); // Close modal
+        setBusiness(business.filter((item) => item.id !== selectedBusiness));
+        setShowDeleteModal(false);
       }
     });
   };
 
-  // Function to handle view action (open view modal)
   const handleView = (business) => {
-    setSelectedBusiness(business); // Set the business to view
-    setShowViewModal(true); // Open the view modal
+    setSelectedBusiness(business);
+    setShowViewModal(true);
   };
 
-  // Close modals
-  const handleCloseViewModal = () => setShowViewModal(false);
-  const handleCloseDeleteModal = () => setShowDeleteModal(false);
+  const filteredBusiness = business.filter((item) =>
+    item.businessName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div>
-      <Row className="justify-content-center mt-4 cat-container">
-        {business.map((businesses, index) => (
-          <Col key={index} xs={12} sm={6} md={4} lg={3} className="mb-4">
-            <div className="shadow-sm rounded-2 p-2 business_card">
-              <Row>
-                {/* Image on the left */}
-                <Col xs={4}>
-                  <img
-                    src={
-                      businesses.logo
-                        ? businesses.logo
-                        : "https://placehold.co/700x600"
-                    }
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://placehold.co/700x600";
-                    }}
-                    style={{
-                      objectFit: "contain",
-                      width: "100%", // Full width of the column
-                      borderRadius: "6px",
-                      height: "100px",
-                    }}
-                    alt="Banner"
-                  />
-                </Col>
+    <Container fluid className="mt-4">
+      {/* Search Bar */}
+      <div className="mb-4">
+        <Form.Control
+          type="text"
+          placeholder="Search by business name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-100"
+        />
+      </div>
 
-                {/* Business name and buttons on the right */}
-                <Col
-                  xs={8}
-                  className="d-flex flex-column justify-content-center"
+      {/* Business Table */}
+      <Table responsive striped bordered hover>
+        <thead>
+          <tr>
+            <th>Logo</th>
+            <th>Business Name</th>
+            <th>Opening Hours</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredBusiness.map((business, index) => (
+            <tr key={index}>
+              <td style={{ width: "100px" }}>
+                <img
+                  src={business.logo || "https://placehold.co/700x600"}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://placehold.co/700x600";
+                  }}
+                  style={{
+                    width: "60px",
+                    height: "60px",
+                    objectFit: "contain",
+                  }}
+                  alt="Business Logo"
+                />
+              </td>
+              <td>{business.businessName}</td>
+              <td>{`${business.fromTime} - ${business.toTime}`}</td>
+              <td>{business.address}</td>
+              <td>{business.email}</td>
+              <td>{business.phone}</td>
+              <td>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => handleDeleteConfirm(business.id)}
                 >
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {businesses.businessName}
-                  </div>
-
-                  <div style={{ marginTop: "10px" }}>
-                    <Button
-                      variant="outline-danger"
-                      className="me-2"
-                      onClick={() => handleDeleteConfirm(businesses.id)}
-                    >
-                      <FaTrash />
-                    </Button>
-                    <Button
-                      variant="outline-primary"
-                      className="me-2"
-                      onClick={() => handleView(businesses)}
-                    >
-                      <FaEye />
-                    </Button>
-                    <Button
-                      variant="outline-success"
-                      onClick={() => console.log("Edit functionality here")}
-                    >
-                      <FaEdit />
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          </Col>
-        ))}
-      </Row>
+                  <FaTrash />
+                </Button>
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => handleView(business)}
+                >
+                  <FaEye />
+                </Button>
+                <Button
+                  variant="outline-success"
+                  size="sm"
+                  onClick={() => console.log("Edit functionality here")}
+                >
+                  <FaEdit />
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
 
       {/* View Modal */}
-      <Modal show={showViewModal} onHide={handleCloseViewModal}>
+      <Modal
+        show={showViewModal}
+        onHide={() => setShowViewModal(false)}
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Business Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedBusiness && (
             <div>
-              <p>
-                <strong>Address:</strong> {selectedBusiness.address}
-              </p>
-              <p>
+              <div className="text-center mb-4">
+                <img
+                  src={selectedBusiness.logo || "https://placehold.co/700x600"}
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    objectFit: "contain",
+                  }}
+                  alt="Business Logo"
+                />
+              </div>
+
+              <h4>{selectedBusiness.businessName}</h4>
+              <p className="mt-3">
                 <strong>Description:</strong> {selectedBusiness.description}
               </p>
 
-              <Row>
-                <Col lg={7}>
-                  <p>
-                    <strong>Email:</strong> {selectedBusiness.email}
-                  </p>
-                </Col>
-
-                <Col lg={5}>
-                  <p>
-                    <strong>Phone:</strong> {selectedBusiness.phone}
-                  </p>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col>
-                  <p>
-                    <strong>Opening Time:</strong> {selectedBusiness.toTime}
-                  </p>
-                </Col>
-
-                <Col>
-                  <p>
-                    <strong>Closing Time:</strong> {selectedBusiness.fromTime}
-                  </p>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col>
+              <div className="row">
+                <div className="col-md-6">
                   <p>
                     <strong>Website:</strong>{" "}
-                    <Link href={selectedBusiness.website}> Website </Link>
+                    <Link to={selectedBusiness.website}>Website</Link>
                   </p>
-                </Col>
-
-                <Col>
                   <p>
-                    <strong>Location:</strong>
-                    <Link href={selectedBusiness.location}> Location </Link>
+                    <strong>Location:</strong>{" "}
+                    <Link to={selectedBusiness.location}>Location</Link>
                   </p>
-                </Col>
-              </Row>
+                </div>
+              </div>
 
-              <Row className="mt-3">
-                {selectedBusiness.images &&
-                selectedBusiness.images.length > 0 ? (
-                  <Row className="mt-3">
-                    {selectedBusiness.images.map((image, index) => (
-                      <Col key={index} xs={3} className="mb-2">
-                        <img
-                          src={image}
-                          alt={`business-pic-${index}`}
-                          className="img-fluid"
-                        />
-                      </Col>
-                    ))}
-                  </Row>
-                ) : (
-                  <p>No images available for this business.</p>
+              {selectedBusiness.images &&
+                selectedBusiness.images.length > 0 && (
+                  <div className="mt-4">
+                    <h5>Business Images</h5>
+                    <div className="row">
+                      {selectedBusiness.images.map((image, index) => (
+                        <div key={index} className="col-md-3 mb-3">
+                          <img
+                            src={image}
+                            alt={`Business ${index + 1}`}
+                            className="img-fluid rounded"
+                            style={{ height: "120px", objectFit: "cover" }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </Row>
             </div>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseViewModal}>
+          <Button variant="secondary" onClick={() => setShowViewModal(false)}>
             Close
           </Button>
         </Modal.Footer>
       </Modal>
 
       {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this business?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseDeleteModal}>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
           <Button variant="danger" onClick={handleDelete}>
@@ -218,7 +204,7 @@ const BusinessShow = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Container>
   );
 };
 
