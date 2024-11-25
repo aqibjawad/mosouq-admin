@@ -10,6 +10,7 @@ const Login = () => {
   const passwordRef = useRef();
 
   const auth = Auth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const otpCodeRefs = [
     useRef(),
@@ -115,13 +116,14 @@ const Login = () => {
       toast.error("Please fill in all fields.");
       return;
     }
+
+    setIsLoading(true); // Start loading
     try {
       const formData = {
         email: emailRef.current.value,
         password: passwordRef.current.value,
       };
       const result = await axios.post(
-        // `http://localhost:5000/api/user/login-admin`,
         `https://apis.mosouq.ae/api/user/login-admin`,
         formData
       );
@@ -131,11 +133,18 @@ const Login = () => {
         console.log(auth.activateToken);
         localStorage.setItem("user", JSON.stringify(result.data.user));
         auth.activateAuthentication(true);
+        toast.success("Login Successful");
         navigate("/dashboard");
       }
     } catch (error) {
-      // Handle error here
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Login failed. Please try again later.");
+      }
       console.error("Error:", error);
+    } finally {
+      setIsLoading(false); // Stop loading whether success or error
     }
   };
 
@@ -185,8 +194,16 @@ const Login = () => {
               type="submit"
               className="signin-button"
               style={{ marginTop: "2rem" }}
+              disabled={isLoading} // Disable button while loading
             >
-              Log in
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Logging in...
+                </div>
+              ) : (
+                "Log in"
+              )}
             </button>
           </form>
         )}

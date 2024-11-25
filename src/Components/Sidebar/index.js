@@ -39,7 +39,12 @@ const SideBar = () => {
     { id: 10, to: "/int-logo", text: "Business Logo" },
     { id: 11, to: "/comp-logo", text: "Business Logo" },
     { id: 8, to: "/blog", text: "Blog", icon: <FaBlog /> },
-    { id: 7, to: "/analytics", text: "Analytics", icon: <MdOutlineAnalytics /> },
+    {
+      id: 7,
+      to: "/analytics",
+      text: "Analytics",
+      icon: <MdOutlineAnalytics />,
+    },
     { id: 7, to: "/settings", text: "Settings", icon: <CiSettings /> },
     { id: 7, to: "/crm", text: "CRM", icon: <SiCivicrm /> },
   ];
@@ -47,24 +52,8 @@ const SideBar = () => {
   return (
     <div className="sidebar col-2">
       <ul className="list-unstyled user-menubar">
-        {menuItems.map((item) => (
-          <li
-            key={item.id}
-            className={`${active === item.id ? "active-list" : ""}`}
-            onClick={() => setActive(item.id)}
-          >
-            <Link to={item.to} className="menu-item">
-              <span className="d-flex">
-                <div style={{ paddingTop: "20px", marginRight: "10px" }}>
-                  {item.icon}
-                </div>
-                <div className="menu-item-text">{item.text}</div>
-              </span>
-            </Link>
-          </li>
-        ))}
 
-        <li onClick={() => toggleDropdown("categories")}>
+        <li style={{cursor:"pointer"}} onClick={() => toggleDropdown("categories")}>
           <div className="menu-item">
             <span className="d-flex">
               <BiCategory style={{ marginTop: "20px", marginRight: "10px" }} />
@@ -93,7 +82,7 @@ const SideBar = () => {
           )}
         </li>
 
-        <li onClick={() => toggleDropdown("businesses")}>
+        <li style={{cursor:"pointer"}} onClick={() => toggleDropdown("businesses")}>
           <div className="menu-item">
             <span className="d-flex">
               <IoIosBusiness
@@ -175,6 +164,23 @@ const SideBar = () => {
             </Link>
           </li>
         </li>
+
+        {menuItems.map((item) => (
+          <li
+            key={item.id}
+            className={`${active === item.id ? "active-list" : ""}`}
+            onClick={() => setActive(item.id)}
+          >
+            <Link to={item.to} className="menu-item">
+              <span className="d-flex">
+                <div style={{ paddingTop: "20px", marginRight: "10px" }}>
+                  {item.icon}
+                </div>
+                <div className="menu-item-text">{item.text}</div>
+              </span>
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
   );
