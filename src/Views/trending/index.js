@@ -46,6 +46,7 @@ const ProfileForm = () => {
     toTime: "",
     lang: "",
     lat: "",
+    businesshours: [],
   });
 
   const [selectedDays, setSelectedDays] = useState({
@@ -96,22 +97,30 @@ const ProfileForm = () => {
   ];
 
   useEffect(() => {
+    // Filter only selected days and their time slots
     const businesshours = Object.keys(selectedDays)
-      .filter((day) => selectedDays[day]) // Include only selected days
+      .filter(
+        (day) => selectedDays[day] && timeSlots[day].from && timeSlots[day].to
+      )
       .map((day) => ({
-        day, // Day name (e.g., 'monday')
-        fromTime: timeSlots[day]?.from || "",
-        toTime: timeSlots[day]?.to || "",
+        day,
+        fromTime: timeSlots[day].from,
+        toTime: timeSlots[day].to,
       }));
-  
-    console.log("Generated businesshours:", JSON.stringify(businesshours, null, 2));
-  
+
+    // Update form data with business hours
     setFormData((prev) => ({
       ...prev,
-      businesshours, // Update the businesshours array in formData
+      businesshours,
     }));
+
+    // Debugging logs
+    console.log("Business Hours:", businesshours);
+    console.log(
+      "Business Hours (Stringified):",
+      JSON.stringify(businesshours, null, 2)
+    );
   }, [selectedDays, timeSlots]);
-  
 
   useEffect(() => {
     GET(`category/get-categories`).then((result) => {
@@ -272,26 +281,12 @@ const ProfileForm = () => {
     try {
       setIsLoading(true);
 
-      // Validate required fields
-      // const requiredFields = [
-      //   "businessName",
-      //   "website",
-      //   "email",
-      //   "phone",
-      //   "zip",
-      //   "country",
-      //   "description",
-      // ];
-      // const missingFields = requiredFields.filter((field) => !formData[field]);
-
-      // if (missingFields.length > 0) {
-      //   throw new Error(
-      //     `Please fill in all required fields: ${missingFields.join(", ")}`
-      //   );
-      // }
-
       // Create an object to hold the form data
-      const formEncodedData = { ...formData };
+      const formEncodedData = {
+        ...formData,
+        // Stringify businesshours to ensure it's properly encoded
+        businesshours: JSON.stringify(formData.businesshours),
+      };
 
       // Remove file fields as they can't be directly form-encoded
       delete formEncodedData.files;
@@ -1101,10 +1096,14 @@ const ProfileForm = () => {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={is24Hours}
+                  checked={isOpen24_7}
                   onChange={() => {
-                    setIs24Hours(!is24Hours);
-                    if (isSelectiveHours) setIsSelectiveHours(false);
+                    setIsAllHours(!isOpen24_7);
+                    // Set isOpen24_7 in formData accordingly
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      isOpen24_7: !isOpen24_7,
+                    }));
                   }}
                   className="w-4 h-4 rounded border-gray-300"
                 />
