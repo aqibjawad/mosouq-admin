@@ -635,6 +635,7 @@ const ProfileForm = () => {
 
   return (
     <div className="main-profile-head mt-5">
+
       {currentSection === 1 && (
         <>
           <form style={{ paddingLeft: "2rem" }}>
@@ -674,7 +675,7 @@ const ProfileForm = () => {
             <Row className="mt-5">
               <Col lg={6} md={6} sm={12}>
                 <label htmlFor="email" style={labelStyle}>
-                  Email
+                  Personal Email
                 </label>
                 <input
                   id="email"
@@ -823,6 +824,7 @@ const ProfileForm = () => {
                 />
               </Form.Group>
             </Col>
+
             <Col lg={6}>
               <div>
                 <label htmlFor="businessName" className="label">
@@ -840,6 +842,7 @@ const ProfileForm = () => {
                 />
               </div>
             </Col>
+
             <Col className="mt-3 mb-3">
               <div>
                 <label htmlFor="website" className="label">
@@ -879,13 +882,13 @@ const ProfileForm = () => {
             <Col lg={6} className="mt-3">
               <div>
                 <label htmlFor="email" className="label">
-                  Email
+                  Company Email
                 </label>
                 <input
                   type="email"
                   name="email"
                   id="email"
-                  placeholder="Enter Email"
+                  placeholder="Enter Company Email"
                   className="input-field"
                   value={formData.email}
                   onChange={handleInputChange}

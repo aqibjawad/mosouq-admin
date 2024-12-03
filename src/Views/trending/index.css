@@ -89,3 +89,21 @@
 .file-input {
     display: none;
 }
+
+
+.d-flex.gap-2 {
+    gap: 0.5rem; /* Decrease gap between elements */
+  }
+  
+  .card-body {
+    padding: 0.75rem; /* Adjust padding to compact the design */
+  }
+  
+  .form-check-input {
+    margin: 0; /* Remove extra space around checkboxes */
+  }
+  
+  .text-muted {
+    font-size: 0.875rem; /* Optionally reduce font size of "to" */
+  }
+  
