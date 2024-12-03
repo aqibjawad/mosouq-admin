@@ -9,6 +9,8 @@ import Select from "react-select";
 
 import AddressPicker from "../../Components/addressPicker";
 
+import BusinessHoursSelector from "./businessHours";
+
 const ProfileForm = () => {
   const token = localStorage.getItem("token");
   const data = jwtDecode(token);
@@ -24,10 +26,6 @@ const ProfileForm = () => {
 
   const [is24Hours, setIs24Hours] = useState(false);
 
-  const [address, setAddress] = useState("");
-  const [lang, setLongitude] = useState("");
-  const [lat, setLatitude] = useState("");
-
   const [formData, setFormData] = useState({
     category: "",
     subcategory: "",
@@ -41,7 +39,7 @@ const ProfileForm = () => {
     logo: "",
     description: "",
     files: [],
-    isOpen24_7: "",
+    isOpen24_7: false,
     fromTime: "",
     toTime: "",
     lang: "",
@@ -286,6 +284,7 @@ const ProfileForm = () => {
         ...formData,
         // Stringify businesshours to ensure it's properly encoded
         businesshours: JSON.stringify(formData.businesshours),
+        isOpen24_7: formData.isOpen24_7.toString(),
       };
 
       // Remove file fields as they can't be directly form-encoded
@@ -1096,13 +1095,15 @@ const ProfileForm = () => {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={isOpen24_7}
+                  checked={formData.isOpen24_7}
                   onChange={() => {
-                    setIsAllHours(!isOpen24_7);
-                    // Set isOpen24_7 in formData accordingly
                     setFormData((prevData) => ({
                       ...prevData,
-                      isOpen24_7: !isOpen24_7,
+                      isOpen24_7: !prevData.isOpen24_7,
+                      // Clear time fields if now 24/7
+                      ...(prevData.isOpen24_7
+                        ? { fromTime: "", toTime: "" }
+                        : {}),
                     }));
                   }}
                   className="w-4 h-4 rounded border-gray-300"
@@ -1110,56 +1111,14 @@ const ProfileForm = () => {
                 <span>24 Hours</span>
               </label>
             </div>
-
             {isSelectiveHours && (
-              <div className="space-y-4">
-                {days.map(({ key, label }) => (
-                  <div
-                    key={key}
-                    className="border rounded-lg p-4 bg-white shadow-sm"
-                  >
-                    <div className="flex items-center justify-between">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={selectedDays[key]}
-                          onChange={() => handleDayToggle(key)}
-                          className="w-4 h-4 rounded border-gray-300"
-                        />
-                        <span className="font-medium">{label}</span>
-                      </label>
-
-                      {selectedDays[key] && (
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-2">
-                            {/* <Clock className="w-4 h-4 text-gray-500" /> */}
-                            <input
-                              type="time"
-                              value={timeSlots[key].from}
-                              onChange={(e) =>
-                                handleTimeChange(key, "from", e.target.value)
-                              }
-                              className="px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-                          <span className="text-gray-500">to</span>
-                          <div className="flex items-center gap-2">
-                            {/* <Clock className="w-4 h-4 text-gray-500" /> */}
-                            <input
-                              type="time"
-                              value={timeSlots[key].to}
-                              onChange={(e) =>
-                                handleTimeChange(key, "to", e.target.value)
-                              }
-                              className="px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <BusinessHoursSelector
+                selectedDays={selectedDays}
+                setSelectedDays={setSelectedDays}
+                timeSlots={timeSlots}
+                setTimeSlots={setTimeSlots}
+                days={days}
+              />
             )}
           </div>
 
