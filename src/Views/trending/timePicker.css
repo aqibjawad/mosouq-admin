@@ -1,61 +1,36 @@
 .time-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .picker-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .scroll-picker {
-    height: 100px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    width: 60px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 5px;
-  }
-  
-  .picker-item {
-    padding: 10px 0;
-    font-size: 16px;
-    cursor: pointer;
-    color: #6c757d;
-    transition: all 0.2s;
-  }
-  
-  .picker-item.active {
-    font-weight: bold;
-    color: #007bff;
-    background: #e8f4fd;
-    border-radius: 4px;
-  }
-  
-  .actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-  
-  .cancel-button, .ok-button {
-    padding: 8px 16px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .cancel-button {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
-  
-  .ok-button {
-    background-color: #28a745;
-    color: white;
-  }
-  
+  display: inline-block;
+}
+
+.picker-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scroll-picker {
+  height: 120px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 60px;
+}
+
+.picker-item {
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.picker-item:hover {
+  background-color: #f5f5f5;
+}
+
+.picker-item.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.colon {
+  font-weight: bold;
+}

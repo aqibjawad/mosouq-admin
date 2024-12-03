@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "react-bootstrap";
-import "./timePicker.css"; // Add your custom styles here
-import { ChevronUp, ChevronDown } from "lucide-react"; 
-// TimePicker Component
+
+import "./timePicker.css";
+
 const TimePicker = ({ value, onChange }) => {
-  const [hour, setHour] = useState(() => value.split(":")[0] || "12");
-  const [minute, setMinute] = useState(() => value.split(":")[1] || "00");
-  const [period, setPeriod] = useState("AM");
+  const [hour, setHour] = useState(() => value?.split(":")[0] || "12");
+  const [minute, setMinute] = useState(
+    () => value?.split(":")[1]?.split(" ")[0] || "00"
+  );
+  const [period, setPeriod] = useState(() => value?.split(" ")[1] || "AM");
 
   const hours = Array.from({ length: 12 }, (_, i) =>
     String(i + 1).padStart(2, "0")
@@ -16,14 +18,17 @@ const TimePicker = ({ value, onChange }) => {
   );
   const periods = ["AM", "PM"];
 
-  const handleChange = (h, m, p) => {
-    onChange(`${h}:${m} ${p}`);
-  };
+  useEffect(() => {
+    let h = parseInt(hour);
+    if (period === "PM" && h !== 12) h += 12;
+    if (period === "AM" && h === 12) h = 0;
+    const formattedTime = `${h.toString().padStart(2, "0")}:${minute}`;
+    onChange(formattedTime);
+  }, [hour, minute, period, onChange]);
 
   return (
     <div className="time-picker">
       <div className="picker-container">
-        {/* Hours Picker */}
         <div className="scroll-picker">
           {hours.map((h) => (
             <div
@@ -38,7 +43,6 @@ const TimePicker = ({ value, onChange }) => {
 
         <span className="colon">:</span>
 
-        {/* Minutes Picker */}
         <div className="scroll-picker">
           {minutes.map((m) => (
             <div
@@ -51,7 +55,6 @@ const TimePicker = ({ value, onChange }) => {
           ))}
         </div>
 
-        {/* Period Picker */}
         <div className="scroll-picker">
           {periods.map((p) => (
             <div
@@ -68,86 +71,30 @@ const TimePicker = ({ value, onChange }) => {
   );
 };
 
-// TimeSelect Component (Your original component)
-const TimeSelect = ({ value, onChange }) => {
-  const [hours, setHours] = useState(() => value.split(":")[0] || "00");
-  const [minutes, setMinutes] = useState(() => value.split(":")[1] || "00");
-
-  const handleHourChange = (delta) => {
-    const newHours = (parseInt(hours) + delta + 24) % 24;
-    setHours(newHours);
-    onChange(
-      `${newHours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}`
-    );
-  };
-
-  const handleMinuteChange = (delta) => {
-    const newMinutes = (parseInt(minutes) + delta + 60) % 60;
-    setMinutes(newMinutes);
-    onChange(
-      `${hours.toString().padStart(2, "0")}:${newMinutes
-        .toString()
-        .padStart(2, "0")}`
-    );
-  };
-
-  return (
-    <div className="d-flex align-items-center gap-1 border rounded px-2 py-1">
-      <div className="d-flex flex-column align-items-center">
-        <button
-          type="button"
-          onClick={() => handleHourChange(1)}
-          className="btn btn-link p-1"
-        >
-          <ChevronUp size={16} />
-        </button>
-        <span className="small w-6 text-center">
-          {hours.toString().padStart(2, "0")}
-        </span>
-        <button
-          type="button"
-          onClick={() => handleHourChange(-1)}
-          className="btn btn-link p-1"
-        >
-          <ChevronDown size={16} />
-        </button>
-      </div>
-
-      <span className="small">:</span>
-
-      <div className="d-flex flex-column align-items-center">
-        <button
-          type="button"
-          onClick={() => handleMinuteChange(1)}
-          className="btn btn-link p-1"
-        >
-          <ChevronUp size={16} />
-        </button>
-        <span className="small w-6 text-center">
-          {minutes.toString().padStart(2, "0")}
-        </span>
-        <button
-          type="button"
-          onClick={() => handleMinuteChange(-1)}
-          className="btn btn-link p-1"
-        >
-          <ChevronDown size={16} />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// BusinessHoursSelector Component
 const BusinessHoursSelector = ({
   selectedDays,
   setSelectedDays,
   timeSlots,
   setTimeSlots,
   days,
+  onChange,
 }) => {
+  useEffect(() => {
+    const businesshours = Object.keys(selectedDays)
+      .filter(
+        (day) => selectedDays[day] && timeSlots[day].from && timeSlots[day].to
+      )
+      .map((day) => ({
+        day,
+        fromTime: timeSlots[day].from,
+        toTime: timeSlots[day].to,
+      }));
+
+    if (onChange) {
+      onChange(businesshours);
+    }
+  }, [selectedDays, timeSlots, onChange]);
+
   const handleDayToggle = (day) => {
     setSelectedDays((prev) => ({
       ...prev,
@@ -186,7 +133,6 @@ const BusinessHoursSelector = ({
 
               {selectedDays[key] && (
                 <div className="d-flex align-items-center gap-2">
-                  {/* Replace the existing TimeSelect with the new TimePicker component */}
                   <TimePicker
                     value={timeSlots[key].from}
                     onChange={(value) => handleTimeChange(key, "from", value)}

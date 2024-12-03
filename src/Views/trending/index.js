@@ -635,7 +635,6 @@ const ProfileForm = () => {
 
   return (
     <div className="main-profile-head mt-5">
-
       {currentSection === 1 && (
         <>
           <form style={{ paddingLeft: "2rem" }}>
@@ -1121,6 +1120,12 @@ const ProfileForm = () => {
                 timeSlots={timeSlots}
                 setTimeSlots={setTimeSlots}
                 days={days}
+                onChange={(businesshours) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    businesshours,
+                  }));
+                }}
               />
             )}
           </div>
