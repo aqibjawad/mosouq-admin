@@ -67,23 +67,6 @@ const ProfileForm = () => {
     sunday: { from: "", to: "" },
   });
 
-  const handleDayToggle = (day) => {
-    setSelectedDays((prev) => ({
-      ...prev,
-      [day]: !prev[day],
-    }));
-  };
-
-  const handleTimeChange = (day, type, value) => {
-    setTimeSlots((prev) => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        [type]: value,
-      },
-    }));
-  };
-
   const days = [
     { key: "monday", label: "Monday" },
     { key: "tuesday", label: "Tuesday" },

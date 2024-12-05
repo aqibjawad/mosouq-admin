@@ -1,152 +1,114 @@
-import React, { useState, useEffect } from "react";
-import { Card } from "react-bootstrap";
+import React, { useState } from "react";
+import { Row, Col, Form } from "react-bootstrap";
 
-import "./timePicker.css";
+const BusinessHoursSelector = () => {
+  const [selectedDays, setSelectedDays] = useState({
+    monday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
+    tuesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    wednesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    thursday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    friday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    saturday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
+    sunday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
+  });
 
-const TimePicker = ({ value, onChange }) => {
-  const [hour, setHour] = useState(() => value?.split(":")[0] || "12");
-  const [minute, setMinute] = useState(
-    () => value?.split(":")[1]?.split(" ")[0] || "00"
-  );
-  const [period, setPeriod] = useState(() => value?.split(" ")[1] || "AM");
-
-  const hours = Array.from({ length: 12 }, (_, i) =>
-    String(i + 1).padStart(2, "0")
-  );
-  const minutes = Array.from({ length: 60 }, (_, i) =>
-    String(i).padStart(2, "0")
-  );
-  const periods = ["AM", "PM"];
-
-  useEffect(() => {
-    let h = parseInt(hour);
-    if (period === "PM" && h !== 12) h += 12;
-    if (period === "AM" && h === 12) h = 0;
-    const formattedTime = `${h.toString().padStart(2, "0")}:${minute}`;
-    onChange(formattedTime);
-  }, [hour, minute, period, onChange]);
-
-  return (
-    <div className="time-picker">
-      <div className="picker-container">
-        <div className="scroll-picker">
-          {hours.map((h) => (
-            <div
-              key={h}
-              className={`picker-item ${hour === h ? "active" : ""}`}
-              onClick={() => setHour(h)}
-            >
-              {h}
-            </div>
-          ))}
-        </div>
-
-        <span className="colon">:</span>
-
-        <div className="scroll-picker">
-          {minutes.map((m) => (
-            <div
-              key={m}
-              className={`picker-item ${minute === m ? "active" : ""}`}
-              onClick={() => setMinute(m)}
-            >
-              {m}
-            </div>
-          ))}
-        </div>
-
-        <div className="scroll-picker">
-          {periods.map((p) => (
-            <div
-              key={p}
-              className={`picker-item ${period === p ? "active" : ""}`}
-              onClick={() => setPeriod(p)}
-            >
-              {p}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const BusinessHoursSelector = ({
-  selectedDays,
-  setSelectedDays,
-  timeSlots,
-  setTimeSlots,
-  days,
-  onChange,
-}) => {
-  useEffect(() => {
-    const businesshours = Object.keys(selectedDays)
-      .filter(
-        (day) => selectedDays[day] && timeSlots[day].from && timeSlots[day].to
-      )
-      .map((day) => ({
-        day,
-        fromTime: timeSlots[day].from,
-        toTime: timeSlots[day].to,
-      }));
-
-    if (onChange) {
-      onChange(businesshours);
+  const timeOptions = [];
+  for (let hour = 4; hour <= 23; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const time = new Date(2024, 0, 1, hour, minute);
+      const timeString = time.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+      timeOptions.push(timeString);
     }
-  }, [selectedDays, timeSlots, onChange]);
+  }
 
-  const handleDayToggle = (day) => {
+  const handleToggle = (day) => {
     setSelectedDays((prev) => ({
-      ...prev,
-      [day]: !prev[day],
-    }));
-  };
-
-  const handleTimeChange = (day, type, value) => {
-    setTimeSlots((prev) => ({
       ...prev,
       [day]: {
         ...prev[day],
-        [type]: value,
+        isOpen: !prev[day].isOpen,
       },
     }));
   };
 
-  return (
-    <div className="d-flex flex-column gap-4">
-      {days.map(({ key, label }) => (
-        <Card key={key} className="shadow-sm">
-          <Card.Body>
-            <div className="d-flex align-items-center justify-content-between">
-              <label
-                className="d-flex align-items-center gap-2"
-                style={{ cursor: "pointer" }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedDays[key]}
-                  onChange={() => handleDayToggle(key)}
-                  className="form-check-input"
-                />
-                <span className="fw-medium">{label}</span>
-              </label>
+  const handleTimeChange = (day, type, time) => {
+    setSelectedDays((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [type]: time,
+      },
+    }));
+  };
 
-              {selectedDays[key] && (
-                <div className="d-flex align-items-center gap-2">
-                  <TimePicker
-                    value={timeSlots[key].from}
-                    onChange={(value) => handleTimeChange(key, "from", value)}
-                  />
-                  <span className="text-muted px-2">to</span>
-                  <TimePicker
-                    value={timeSlots[key].to}
-                    onChange={(value) => handleTimeChange(key, "to", value)}
-                  />
-                </div>
-              )}
-            </div>
-          </Card.Body>
-        </Card>
+  const days = [
+    { key: "monday", label: "Monday" },
+    { key: "tuesday", label: "Tuesday" },
+    { key: "wednesday", label: "Wednesday" },
+    { key: "thursday", label: "Thursday" },
+    { key: "friday", label: "Friday" },
+    { key: "saturday", label: "Saturday" },
+    { key: "sunday", label: "Sunday" },
+  ];
+
+  return (
+    <div className="max-w-2xl mx-auto p-4">
+      {days.map(({ key, label }) => (
+        <Row key={key} className="mb-3 align-items-center">
+          <Col xs={3} className="text-capitalize">
+            {label}
+          </Col>
+          <Col xs={2}>
+            <Form.Check
+              type="switch"
+              id={`switch-${key}`}
+              label={selectedDays[key].isOpen ? "Open" : "Closed"}
+              checked={selectedDays[key].isOpen}
+              onChange={() => handleToggle(key)}
+            />
+          </Col>
+          {selectedDays[key].isOpen && (
+            <>
+              <Col xs={3}>
+                <Form.Control
+                  as="select"
+                  value={selectedDays[key].open}
+                  onChange={(e) =>
+                    handleTimeChange(key, "open", e.target.value)
+                  }
+                >
+                  {timeOptions.map((time) => (
+                    <option key={`open-${time}`} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Col>
+              <Col xs={1} className="text-center">
+                -
+              </Col>
+              <Col xs={3}>
+                <Form.Control
+                  as="select"
+                  value={selectedDays[key].close}
+                  onChange={(e) =>
+                    handleTimeChange(key, "close", e.target.value)
+                  }
+                >
+                  {timeOptions.map((time) => (
+                    <option key={`close-${time}`} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Col>
+            </>
+          )}
+        </Row>
       ))}
     </div>
   );
