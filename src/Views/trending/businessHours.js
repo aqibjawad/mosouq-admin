@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 
-const BusinessHoursSelector = () => {
-  const [selectedDays, setSelectedDays] = useState({
+const BusinessHoursSelector = ({ onChange }) => {
+  const [selectedDays, setSelectedDays] = React.useState({
     monday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
     tuesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
     wednesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
@@ -11,6 +11,36 @@ const BusinessHoursSelector = () => {
     saturday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
     sunday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
   });
+
+  // Convert 12-hour format to 24-hour format
+  const convertTo24Hour = (time12h) => {
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    hours = parseInt(hours);
+
+    if (modifier === 'PM' && hours < 12) {
+      hours += 12;
+    }
+    if (modifier === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+  };
+
+  useEffect(() => {
+    // Format business hours for API
+    const businesshours = Object.entries(selectedDays)
+      .filter(([_, value]) => value.isOpen)
+      .map(([day, value]) => ({
+        day: day.toLowerCase(),
+        fromTime: convertTo24Hour(value.open),
+        toTime: convertTo24Hour(value.close)
+      }));
+
+    // Call onChange with formatted business hours
+    onChange(businesshours);
+  }, [selectedDays, onChange]);
 
   const timeOptions = [];
   for (let hour = 4; hour <= 23; hour++) {
