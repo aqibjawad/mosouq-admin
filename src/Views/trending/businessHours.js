@@ -3,7 +3,7 @@ import { Row, Col, Form } from "react-bootstrap";
 
 const BusinessHoursSelector = ({ onChange }) => {
   const [selectedDays, setSelectedDays] = React.useState({
-    monday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
+    monday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
     tuesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
     wednesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
     thursday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },

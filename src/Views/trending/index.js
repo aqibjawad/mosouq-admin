@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import "./index.css";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { toast } from "react-toastify";
 
 import AddressPicker from "../../Components/addressPicker";
 
@@ -194,20 +195,33 @@ const ProfileForm = () => {
 
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
+
     setIsLoading(true);
+
     try {
       const response = await POST("business/add-businessAdmin", formSignData);
+
       const { email, token, businessId } = response;
+
       console.log("Business ID:", response.businessId);
 
       setFormData((prevData) => ({
         ...prevData,
+
         businessId: response.businessId,
       }));
 
       setCurrentSection(2);
     } catch (error) {
       console.error("Error:", error);
+
+      // Show error toast
+
+      toast.error("Email is already in use", {
+        duration: 3000, // Will show for 3 seconds
+
+        position: "top-right",
+      });
     } finally {
       setIsLoading(false);
     }
