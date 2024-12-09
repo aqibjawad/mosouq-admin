@@ -382,6 +382,7 @@ const ProfileForm = () => {
                   placeholder="Enter Number"
                   className="input-field"
                   value={formData.consultation}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
