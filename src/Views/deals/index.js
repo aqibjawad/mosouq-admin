@@ -53,8 +53,6 @@ const ProfileForm = () => {
   const handleContinue = () => setCurrentSection(2);
   const handleBack1 = () => setCurrentSection(1);
 
-  const navigation = useNavigate();
-
   const handleContinueSubmit = async (event) => {
     event.preventDefault();
 

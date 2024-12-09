@@ -671,15 +671,30 @@ const ProfileForm = () => {
             <Row className="mt-5">
               <Col lg={6} md={6} sm={12}>
                 <label htmlFor="email" style={labelStyle}>
-                  Personal Email
+                  Company Email
                 </label>
                 <input
                   id="email"
                   style={{ width: "100%" }}
                   type="text"
                   name="email"
-                  placeholder="Company Name"
+                  placeholder="Company Email"
                   value={formSignData.email}
+                  onChange={handleChange}
+                  className="mt-3"
+                />
+              </Col>
+              <Col lg={6} md={6} sm={12}>
+                <label htmlFor="email" style={labelStyle}>
+                  Company Phone
+                </label>
+                <input
+                  id="email"
+                  style={{ width: "100%" }}
+                  type="text"
+                  name="phone"
+                  placeholder="Company Phone"
+                  value={formSignData.phone}
                   onChange={handleChange}
                   className="mt-3"
                 />
@@ -874,7 +889,7 @@ const ProfileForm = () => {
 
       {currentSection === 3 && (
         <>
-          <Row className="mt-5">
+          {/* <Row className="mt-5">
             <Col lg={6} className="mt-3">
               <div>
                 <label htmlFor="email" className="label">
@@ -910,7 +925,7 @@ const ProfileForm = () => {
                 />
               </div>
             </Col>
-          </Row>
+          </Row> */}
 
           <div className="business-prof-setup-head mt-5">Business Address</div>
           <div className="business-prof-descrp">
