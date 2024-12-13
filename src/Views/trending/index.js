@@ -1086,17 +1086,23 @@ const ProfileForm = () => {
                     ],
                     toolbar:
                       "undo redo | formatselect | bold italic backcolor | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist | removeformat | help | UL OL",
+       alignleft aligncenter alignright alignjustify | \
+       bullist numlist | removeformat | help | UL OL",
                     setup: (editor) => {
+                      // Custom button for UL
                       editor.ui.registry.addButton("UL", {
                         text: "UL",
-                        onAction: () =>
-                          editor.execCommand("InsertUnorderedList"),
+                        onAction: () => {
+                          editor.execCommand("InsertUnorderedList");
+                        },
                       });
+
+                      // Custom button for OL
                       editor.ui.registry.addButton("OL", {
                         text: "OL",
-                        onAction: () => editor.execCommand("InsertOrderedList"),
+                        onAction: () => {
+                          editor.execCommand("InsertOrderedList");
+                        },
                       });
                     },
                   }}
