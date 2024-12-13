@@ -1086,8 +1086,19 @@ const ProfileForm = () => {
                     ],
                     toolbar:
                       "undo redo | formatselect | bold italic backcolor | \
-                       alignleft aligncenter alignright alignjustify | \
-                      bullist numlist outdent indent | removeformat | help",
+                        alignleft aligncenter alignright alignjustify | \
+                        bullist numlist | removeformat | help | UL OL",
+                    setup: (editor) => {
+                      editor.ui.registry.addButton("UL", {
+                        text: "UL",
+                        onAction: () =>
+                          editor.execCommand("InsertUnorderedList"),
+                      });
+                      editor.ui.registry.addButton("OL", {
+                        text: "OL",
+                        onAction: () => editor.execCommand("InsertOrderedList"),
+                      });
+                    },
                   }}
                   onEditorChange={handleEditorChange}
                 />
