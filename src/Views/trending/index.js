@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import AddressPicker from "../../Components/addressPicker";
 
 import BusinessHoursSelector from "./businessHours";
+import { Editor } from "@tinymce/tinymce-react";
 
 const ProfileForm = () => {
   const token = localStorage.getItem("token");
@@ -24,6 +25,15 @@ const ProfileForm = () => {
   const [imagePreview, setImagePreview] = useState(
     "https://via.placeholder.com/150"
   );
+
+  const handleEditorChange = (content) => {
+    handleInputChange({
+      target: {
+        name: "description",
+        value: content,
+      },
+    });
+  };
 
   const [is24Hours, setIs24Hours] = useState(false);
 
@@ -1053,7 +1063,7 @@ const ProfileForm = () => {
                 <label htmlFor="description" className="label">
                   Description
                 </label>
-                <textarea
+                {/* <textarea
                   name="description"
                   id="description"
                   placeholder="Enter Description"
@@ -1062,6 +1072,24 @@ const ProfileForm = () => {
                   onChange={handleInputChange}
                   rows={4}
                   required
+                /> */}
+                <Editor
+                  apiKey="q52q0lhptx8f862ep5ichss9wa4yfqjys86yeo2ltmbgwafj"
+                  value={formData.description}
+                  init={{
+                    height: 500,
+                    menubar: true,
+                    plugins: [
+                      "advlist autolink lists link image charmap print preview anchor",
+                      "searchreplace visualblocks code fullscreen",
+                      "insertdatetime media table paste code help wordcount",
+                    ],
+                    toolbar:
+                      "undo redo | formatselect | bold italic backcolor | \
+                       alignleft aligncenter alignright alignjustify | \
+                      bullist numlist outdent indent | removeformat | help",
+                  }}
+                  onEditorChange={handleEditorChange}
                 />
               </div>
             </Col>

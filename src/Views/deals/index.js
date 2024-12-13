@@ -71,7 +71,7 @@ const ProfileForm = () => {
 
       const res = await POST("deal/add-deal", payload);
 
-      if (!res.error) {
+      if (!res.error) { 
         toast("Added Done");
 
         // Ensure dealId is extracted correctly from the response
@@ -85,48 +85,9 @@ const ProfileForm = () => {
         toast.error(res.sqlMessage);
       }
     } catch (error) {
-      console.error("Error adding category:", error);
-      toast.error("Failed to add category. Please try again.");
+      console.error("Error adding deals:", error);
     }
   };
-
-  // const handleContinueSubmit = async () => {
-  //   try {
-  //     setIsLoading(true);
-
-  //     // Remove any undefined values
-  //     Object.keys(formEncodedData).forEach(
-  //       (key) =>
-  //         formEncodedData[key] === undefined && delete formEncodedData[key]
-  //     );
-
-  //     // Convert the object to a URL-encoded string
-  //     const encodedData = Object.keys(formEncodedData)
-  //       .map(
-  //         (key) =>
-  //           encodeURIComponent(key) +
-  //           "=" +
-  //           encodeURIComponent(formEncodedData[key])
-  //       )
-  //       .join("&");
-
-  //     const profileResponse = await POST(
-  //       "business-profile/add-business-profile",
-  //       encodedData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/x-www-form-urlencoded",
-  //         },
-  //       }
-  //     );
-
-  //     console.log(profileResponse);
-
-  //     setCurrentSection(5);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleFinalSubmit = async () => {
     try {

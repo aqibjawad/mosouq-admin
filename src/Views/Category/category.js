@@ -20,7 +20,6 @@ import { FaPencil } from "react-icons/fa6";
 import Swal from "sweetalert2";
 
 const Category = () => {
-  
   const [formData, setFormData] = useState({
     name: "",
     category_image: "",
@@ -159,27 +158,33 @@ const Category = () => {
 
   const confirmEdit = async () => {
     const formData = new FormData();
-    formData.append("name", nameRef.current.value);
+
+    // Use .set() instead of .append() to ensure single value
+    formData.set("name", nameRef.current.value);
 
     if (image) {
-      formData.append("category_image", image);
+      formData.set("category_image", image);
+    }
+
+    // Log FormData contents for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
     }
 
     try {
       const res = await PUT(
         `category/update-category/${selectedCategory._id}`,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
-      if (!res.error) {
-        toast("Updated Done");
-        fetchData();
-        setShowEditModal(false);
-      } else {
-        toast.error(res.sqlMessage);
-      }
+      // ... rest of the code
     } catch (error) {
-      console.error("Error updating category:", error);
-      toast.error("Failed to update category. Please try again.");
+      console.error("Full error details:", error.response);
+      toast.error(error.response?.data?.message || "Failed to update category");
     }
   };
 
