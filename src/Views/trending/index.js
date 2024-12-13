@@ -1083,28 +1083,25 @@ const ProfileForm = () => {
                       "advlist autolink lists link image charmap print preview anchor",
                       "searchreplace visualblocks code fullscreen",
                       "insertdatetime media table paste code help wordcount",
+                      "lists", // Added lists plugin explicitly
                     ],
-                    toolbar:
-                      "undo redo | formatselect | bold italic backcolor | \
-       alignleft aligncenter alignright alignjustify | \
-       bullist numlist | removeformat | help | UL OL",
-                    setup: (editor) => {
-                      // Custom button for UL
-                      editor.ui.registry.addButton("UL", {
-                        text: "UL",
-                        onAction: () => {
-                          editor.execCommand("InsertUnorderedList");
-                        },
-                      });
-
-                      // Custom button for OL
-                      editor.ui.registry.addButton("OL", {
-                        text: "OL",
-                        onAction: () => {
-                          editor.execCommand("InsertOrderedList");
-                        },
-                      });
-                    },
+                    toolbar: [
+                      "undo redo | formatselect | bold italic backcolor",
+                      "alignleft aligncenter alignright alignjustify",
+                      "bullist numlist outdent indent | removeformat | help",
+                    ].join(" | "),
+                    // List formatting options
+                    advlist_bullet_styles: "square circle disc",
+                    advlist_number_styles:
+                      "lower-alpha lower-roman decimal upper-alpha upper-roman",
+                    lists_indent_on_tab: true,
+                    // Additional list-related configurations
+                    content_style: `
+          ul { list-style-type: disc; margin-left: 20px; }
+          ol { list-style-type: decimal; margin-left: 20px; }
+          ul ul { list-style-type: circle; }
+          ol ol { list-style-type: lower-alpha; }
+        `,
                   }}
                   onEditorChange={handleEditorChange}
                 />
