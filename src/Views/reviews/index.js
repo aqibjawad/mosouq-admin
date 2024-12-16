@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Col,
   Row,
@@ -9,12 +9,18 @@ import {
   FormControl,
   Breadcrumb,
   Table,
+  Modal,
+  Spinner,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { POST, GET } from "../../apicontroller/ApiController";
 
 const Reviews = () => {
   const [staffData, setStaffData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalDescription, setModalDescription] = useState("");
+  const [selectedReview, setSelectedReview] = useState(null);
 
   useEffect(() => {
     fetchStaffData();
@@ -22,7 +28,7 @@ const Reviews = () => {
 
   const fetchStaffData = async () => {
     try {
-      const response = await GET("reviews/getAll");
+      const response = await GET("reviews/getAllReviews");
       setStaffData(response);
     } catch (error) {
       console.error("Error fetching Reviews data:", error);
@@ -31,11 +37,12 @@ const Reviews = () => {
   };
 
   const handleApprove = async (id, currentStatus) => {
+    setLoading(true); // Start loading
     try {
       const newStatus = !currentStatus; // Toggle the status
       const payload = {
-        id: id, // Send the id in the request body
-        approved: newStatus, // Optionally include the new approval status if needed
+        id: id,
+        approved: newStatus,
       };
 
       await POST("reviews/approveReview", payload); // Adjust the API endpoint if necessary
@@ -52,7 +59,19 @@ const Reviews = () => {
     } catch (error) {
       console.error("Error updating review status:", error);
       toast.error("Failed to update review status");
+    } finally {
+      setLoading(false); // Stop loading
     }
+  };
+
+  const handleShowDescription = (description) => {
+    setModalDescription(description);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalDescription("");
   };
 
   return (
@@ -72,7 +91,8 @@ const Reviews = () => {
                 <thead>
                   <tr>
                     <th>Business Name</th>
-                    <th>Business Email</th> <th>Business Company</th>
+                    <th>Business Email</th>
+                    <th>Business Company</th>
                     <th>User Name</th>
                     <th>User Email</th>
                     <th>Rating</th>
@@ -86,30 +106,40 @@ const Reviews = () => {
                   {staffData && staffData.length > 0 ? (
                     staffData.map((staff, index) => (
                       <tr key={index}>
-                        <td>{staff?.businessId?.name ||"null"}</td>{" "}
-                        <td>{staff?.businessId?.email ||"null"}</td>{" "}
-                        <td>{staff?.businessId?.company ||"null"}</td>{" "}
+                        <td>{staff?.businessId?.name || "null"}</td>
+                        <td>{staff?.businessId?.email || "null"}</td>
+                        <td>{staff?.businessId?.company || "null"}</td>
                         <td>{staff.userId.name}</td>
                         <td>{staff.userId.email}</td>
                         <td>{staff.rating}</td>
                         <td>{staff.title}</td>
-                        <td>{staff.description.slice(0, 40)}...</td>
+                        <td
+                          onClick={() =>
+                            handleShowDescription(staff.description)
+                          }
+                        >
+                          {staff.description.slice(0, 40)}...
+                        </td>
                         <td>{staff.approved ? "Approved" : "Not Approved"}</td>
                         <td>
-                          <Button
-                            variant={staff.approved ? "danger" : "success"}
-                            onClick={() =>
-                              handleApprove(staff._id, staff.approved)
-                            }
-                          >
-                            {staff.approved ? "Disapprove" : "Approve"}
-                          </Button>
+                          {loading ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : (
+                            <Button
+                              variant={staff.approved ? "danger" : "success"}
+                              onClick={() =>
+                                handleApprove(staff._id, staff.approved)
+                              }
+                            >
+                              {staff.approved ? "Disapprove" : "Approve"}
+                            </Button>
+                          )}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4">No staff data available</td>
+                      <td colSpan="10">No reviews data available</td>
                     </tr>
                   )}
                 </tbody>
@@ -118,6 +148,19 @@ const Reviews = () => {
           </div>
         </Col>
       </Row>
+
+      {/* Modal for viewing description */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Review Description</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modalDescription}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

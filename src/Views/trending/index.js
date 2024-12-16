@@ -41,8 +41,6 @@ const ProfileForm = () => {
     category: "",
     subcategory: "",
     businessName: "",
-    website: "",
-    phone: "",
     city: "",
     address: "",
     country: "UAE",
@@ -200,6 +198,7 @@ const ProfileForm = () => {
     email: "",
     country: "UAE",
     phone: "",
+    website: "",
     role: "business",
   });
 
@@ -647,116 +646,99 @@ const ProfileForm = () => {
           <form style={{ paddingLeft: "2rem" }}>
             <Row>
               <Col lg={6} md={6} sm={12}>
-                <label htmlFor="name" style={labelStyle}>
+                <label htmlFor="website" className="label">
                   Name
                 </label>
                 <input
-                  id="name"
-                  style={{ width: "100%" }}
                   type="text"
                   name="name"
-                  placeholder="Name"
+                  id="name"
+                  placeholder="Enter Your Name"
+                  className="input-field"
                   value={formSignData.name}
                   onChange={handleChange}
-                  className="mt-3"
                 />
               </Col>
+
               <Col lg={6} md={6} sm={12}>
-                <label htmlFor="company" style={labelStyle}>
+                <label htmlFor="website" className="label">
                   Company Name
                 </label>
                 <input
-                  id="company"
-                  style={{ width: "100%" }}
                   type="text"
                   name="company"
-                  placeholder="Company Name"
+                  id="company"
+                  placeholder="Enter Company Name"
+                  className="input-field"
                   value={formSignData.company}
                   onChange={handleChange}
-                  className="mt-3"
                 />
               </Col>
             </Row>
 
             <Row className="mt-5">
               <Col lg={6} md={6} sm={12}>
-                <label htmlFor="email" style={labelStyle}>
+                <label htmlFor="website" className="label">
                   Company Email
                 </label>
                 <input
-                  id="email"
-                  style={{ width: "100%" }}
                   type="text"
                   name="email"
-                  placeholder="Company Email"
+                  id="email"
+                  placeholder="Enter Business email"
+                  className="input-field"
                   value={formSignData.email}
                   onChange={handleChange}
-                  className="mt-3"
                 />
               </Col>
+
               <Col lg={6} md={6} sm={12}>
-                <label htmlFor="email" style={labelStyle}>
-                  Company Phone
+                <label htmlFor="website" className="label">
+                  Phone
                 </label>
                 <input
-                  id="email"
-                  style={{ width: "100%" }}
                   type="text"
                   name="phone"
-                  placeholder="Company Phone"
+                  id="phone"
+                  placeholder="Enter Business phone"
+                  className="input-field"
                   value={formSignData.phone}
                   onChange={handleChange}
-                  className="mt-3"
                 />
               </Col>
-              <Col lg={6} md={6} sm={12}>
-                <label htmlFor="company" style={labelStyle}>
+
+              <Col className="mt-3 mb-3">
+                <div>
+                  <label htmlFor="website" className="label">
+                    Business Website
+                  </label>
+                  <input
+                    type="text"
+                    name="website"
+                    id="website"
+                    placeholder="Enter Business Website"
+                    className="input-field"
+                    value={formSignData.website}
+                    onChange={handleChange}
+                  />
+                </div>
+              </Col>
+
+              <Col className="mt-3" lg={6} md={6} sm={12}>
+                <label htmlFor="website" className="label">
                   Password
                 </label>
                 <input
-                  id="password"
-                  style={{ width: "100%" }}
                   type="text"
                   name="password"
-                  placeholder="Password"
+                  id="password"
+                  placeholder="Enter Business password"
+                  className="input-field"
                   value={formSignData.password}
                   onChange={handleChange}
-                  className="mt-3"
                 />
               </Col>
             </Row>
-
-            {/* <Row>
-              <Col lg={6} md={6} sm={12} className="mt-4">
-                <label htmlFor="country" style={labelStyle}>
-                  Country
-                </label>
-                <br />
-                <select
-                  id="country"
-                  name="country"
-                  style={{
-                    width: "266.49px",
-                    height: "50px",
-                    marginTop: "2rem",
-                    borderRadius: "6px",
-                    border: "1px solid #66666659",
-                    paddingLeft: "15px", // Adjust padding for left alignment of selected value
-                    backgroundColor: "#fff", // Optional: set background color for better visibility
-                  }}
-                  value={formSignData.country}
-                  onChange={handleChange}
-                  className="mt-3" // additional className for margin-top adjustment
-                >
-                  <option value="">Select a country</option>
-                  {countries.map((country) => (
-                    <option key={country.value} value={country.value}>
-                      {country.label}
-                    </option>
-                  ))}
-                </select>
-              </Col>
-            </Row> */}
           </form>
 
           <Row>
@@ -845,51 +827,113 @@ const ProfileForm = () => {
                 />
               </Form.Group>
             </Col>
-
-            <Col lg={6}>
-              <div>
-                <label htmlFor="businessName" className="label">
-                  Business Name
-                </label>
-                <input
-                  type="text"
-                  name="businessName"
-                  id="businessName"
-                  placeholder="Enter Business Name"
-                  className="input-field"
-                  value={formData.businessName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </Col>
-
-            <Col className="mt-3 mb-3">
-              <div>
-                <label htmlFor="website" className="label">
-                  Business Website
-                </label>
-                <input
-                  type="text"
-                  name="website"
-                  id="website"
-                  placeholder="Enter Business Website"
-                  className="input-field"
-                  value={formData.website}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </Col>
           </Row>
 
-          <Row>
+          <div>
+              <div className="business-prof-setup-head mt-5">
+                Business Address
+              </div>
+              <div className="business-prof-descrp">
+                Add your main office address if you have multiple locations
+              </div>
+
+              <Row className="mt-5">
+                <Col>
+                  <div>
+                    <label htmlFor="city" className="label">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      id="city"
+                      placeholder="Enter City"
+                      className="input-field"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </Col>
+                <Col>
+                  <div>
+                    <label htmlFor="zip" className="label">
+                      search address
+                    </label>
+                    <AddressPicker onPlaceSelected={handlePlaceSelected} />
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="mt-2">
+                <Col lg={4}>
+                  <div>
+                    <label htmlFor="address" className="label">
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      id="address"
+                      placeholder="Enter Address"
+                      className="input-field"
+                      value={formData.address}
+                      onChange={(e) =>
+                        setFormData({ ...formData, address: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </Col>
+                <Col lg={4}>
+                  <div>
+                    <label htmlFor="country" className="label">
+                      Latitude
+                    </label>
+                    <input
+                      type="text"
+                      name="latitude"
+                      id="latitude"
+                      placeholder="Latitude"
+                      className="input-field"
+                      value={formData.lat}
+                      onChange={(e) =>
+                        setFormData({ ...formData, lat: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </Col>
+                <Col lg={4}>
+                  <div>
+                    <label htmlFor="country" className="label">
+                      Longitude
+                    </label>
+                    <input
+                      type="text"
+                      name="longitude"
+                      id="longitude"
+                      placeholder="Longitude"
+                      className="input-field"
+                      value={formData.lang}
+                      onChange={(e) =>
+                        setFormData({ ...formData, lang: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </Col>
+              </Row>
+          </div>
+
+          <Row className="mt-5">
             <Col>
               <div onClick={handleBack} className="back-btn">
                 Back
               </div>
             </Col>
             <Col lg={6} md={6} sm={12}>
-              <div className="continue-btn" onClick={handleContinue}>
+              <div className="continue-btn" onClick={handleContinueDescription}>
                 Continue
               </div>
             </Col>
@@ -897,163 +941,7 @@ const ProfileForm = () => {
         </>
       )}
 
-      {currentSection === 3 && (
-        <>
-          {/* <Row className="mt-5">
-            <Col lg={6} className="mt-3">
-              <div>
-                <label htmlFor="email" className="label">
-                  Company Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="Enter Company Email"
-                  className="input-field"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </Col>
-
-            <Col lg={6} className="mt-3">
-              <div>
-                <label htmlFor="phone" className="label">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  id="phone"
-                  placeholder="Enter Phone Number"
-                  className="input-field"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </Col>
-          </Row> */}
-
-          <div className="business-prof-setup-head mt-5">Business Address</div>
-          <div className="business-prof-descrp">
-            Add your main office address if you have multiple locations
-          </div>
-
-          <Row className="mt-5">
-            <Col>
-              <div>
-                <label htmlFor="city" className="label">
-                  City
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  placeholder="Enter City"
-                  className="input-field"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </Col>
-            <Col>
-              <div>
-                <label htmlFor="zip" className="label">
-                  search address
-                </label>
-                {/* <input
-                  type="text"
-                  name="zip"
-                  id="zip"
-                  placeholder="Enter Zip"
-                  className="input-field"
-                  value={formData.zip}
-                  onChange={handleInputChange}
-                  required
-                /> */}
-                <AddressPicker onPlaceSelected={handlePlaceSelected} />
-              </div>
-            </Col>
-          </Row>
-
-          <Row className="mt-2">
-            <Col lg={4}>
-              <div>
-                <label htmlFor="address" className="label">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  id="address"
-                  placeholder="Enter Address"
-                  className="input-field"
-                  value={formData.address}
-                  onChange={(e) =>
-                    setFormData({ ...formData, address: e.target.value })
-                  }
-                  required
-                />
-              </div>
-            </Col>
-            <Col lg={4}>
-              <div>
-                <label htmlFor="country" className="label">
-                  Latitude
-                </label>
-                <input
-                  type="text"
-                  name="latitude"
-                  id="latitude"
-                  placeholder="Latitude"
-                  className="input-field"
-                  value={formData.lat}
-                  onChange={(e) =>
-                    setFormData({ ...formData, lat: e.target.value })
-                  }
-                  required
-                />
-              </div>
-            </Col>
-            <Col lg={4}>
-              <div>
-                <label htmlFor="country" className="label">
-                  Longitude
-                </label>
-                <input
-                  type="text"
-                  name="longitude"
-                  id="longitude"
-                  placeholder="Longitude"
-                  className="input-field"
-                  value={formData.lang}
-                  onChange={(e) =>
-                    setFormData({ ...formData, lang: e.target.value })
-                  }
-                  required
-                />
-              </div>
-            </Col>
-          </Row>
-
-          <Row className="mt-5">
-            <Col>
-              <div onClick={handleBack1} className="back-btn">
-                Back
-              </div>
-            </Col>
-            <Col className="text-end">
-              <div onClick={handleContinueDescription} className="continue-btn">
-                Continue
-              </div>
-            </Col>
-          </Row>
-        </>
-      )}
+      {currentSection === 3 && ""}
 
       {currentSection === 4 && (
         <>
