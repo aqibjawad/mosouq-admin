@@ -10,9 +10,13 @@ import { toast } from "react-toastify";
 import AddressPicker from "../../Components/addressPicker";
 
 const ProfileForm = () => {
+
   const [currentSection, setCurrentSection] = useState(1);
 
-  const [formData, setFormData] = useState({
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Initial state for form data
+  const initialFormState = {
     businessName: "",
     website: "",
     name: "",
@@ -25,7 +29,9 @@ const ProfileForm = () => {
     files: [],
     price: "",
     discount: "",
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -71,7 +77,7 @@ const ProfileForm = () => {
 
       const res = await POST("deal/add-deal", payload);
 
-      if (!res.error) { 
+      if (!res.error) {
         toast("Added Done");
 
         // Ensure dealId is extracted correctly from the response
@@ -90,6 +96,7 @@ const ProfileForm = () => {
   };
 
   const handleFinalSubmit = async () => {
+    setIsLoading(true);
     try {
       const filesFormData = new FormData();
 
@@ -119,6 +126,10 @@ const ProfileForm = () => {
             title: "Deal Submitted",
             text: "Your deal has been successfully submitted!",
           });
+
+          // Reset form state and go back to first section
+          setFormData(initialFormState);
+          setCurrentSection(1);
         } else {
           throw new Error("Failed to update business images");
         }
@@ -132,10 +143,10 @@ const ProfileForm = () => {
         title: "Oops...",
         text: "Something went wrong! Please try again.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const handlePlaceSelected = (place) => {
     if (place) {
@@ -162,7 +173,6 @@ const ProfileForm = () => {
       });
     }
   };
-
   return (
     <div className="main-profile-head mt-5">
       {currentSection === 1 && (
@@ -445,7 +455,11 @@ const ProfileForm = () => {
               </div>
             </Col>
             <Col className="text-end">
-              <div onClick={handleFinalSubmit} className="continue-btn">
+              <div
+                onClick={handleFinalSubmit}
+                className="continue-btn"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <span
                     className="spinner-border spinner-border-sm me-2"
@@ -453,7 +467,7 @@ const ProfileForm = () => {
                     aria-hidden="true"
                   ></span>
                 ) : null}
-                {isLoading ? "Submitting Your Profile..." : "Submit"}
+                {isLoading ? "Submitting..." : "Submit"}
               </div>
             </Col>
           </Row>
