@@ -6,14 +6,23 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "react-toastify";
+import { Editor } from "@tinymce/tinymce-react";
 
 import AddressPicker from "../../Components/addressPicker";
 
 const ProfileForm = () => {
-
   const [currentSection, setCurrentSection] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleEditorChange = (content) => {
+    handleInputChange({
+      target: {
+        name: "description",
+        value: content,
+      },
+    });
+  };
 
   // Initial state for form data
   const initialFormState = {
@@ -396,12 +405,12 @@ const ProfileForm = () => {
               </div>
             </Col>
 
-            <Col lg={8}>
+            <Col lg={12}>
               <div>
                 <label htmlFor="description" className="label">
                   Description
                 </label>
-                <textarea
+                {/* <textarea
                   name="description"
                   id="description"
                   placeholder="Enter Description"
@@ -410,6 +419,38 @@ const ProfileForm = () => {
                   onChange={handleInputChange}
                   rows={4}
                   required
+                /> */}
+                <Editor
+                  apiKey="q52q0lhptx8f862ep5ichss9wa4yfqjys86yeo2ltmbgwafj"
+                  value={formData.description}
+                  init={{
+                    height: 500,
+                    menubar: true,
+                    plugins: [
+                      "advlist autolink lists link image charmap print preview anchor",
+                      "searchreplace visualblocks code fullscreen",
+                      "insertdatetime media table paste code help wordcount",
+                      "lists", // Added lists plugin explicitly
+                    ],
+                    toolbar: [
+                      "undo redo | formatselect | bold italic backcolor",
+                      "alignleft aligncenter alignright alignjustify",
+                      "bullist numlist outdent indent | removeformat | help",
+                    ].join(" | "),
+                    // List formatting options
+                    advlist_bullet_styles: "square circle disc",
+                    advlist_number_styles:
+                      "lower-alpha lower-roman decimal upper-alpha upper-roman",
+                    lists_indent_on_tab: true,
+                    // Additional list-related configurations
+                    content_style: `
+                          ul { list-style-type: disc; margin-left: 20px; }
+                          ol { list-style-type: decimal; margin-left: 20px; }
+                          ul ul { list-style-type: circle; }
+                          ol ol { list-style-type: lower-alpha; }
+                        `,
+                  }}
+                  onEditorChange={handleEditorChange}
                 />
               </div>
             </Col>
