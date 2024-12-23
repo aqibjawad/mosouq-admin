@@ -1,14 +1,8 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 
 import { toast } from "react-toastify";
 
-import {
-  POST,
-  GET,
-  DELETE,
-  GETID,
-  PUT,
-} from "../../apicontroller/ApiController";
+import { POST, GET, DELETE } from "../../apicontroller/ApiController";
 
 import {
   InputGroup,
@@ -19,12 +13,10 @@ import {
   Col,
   Table,
   Button,
-  Modal,
   Breadcrumb,
 } from "react-bootstrap";
 
 import { AiFillDelete } from "react-icons/ai";
-import { BsFillPencilFill } from "react-icons/bs";
 
 import Swal from "sweetalert2";
 
@@ -53,20 +45,16 @@ const SubCategory = () => {
     if (file) {
       setImagePreview(URL.createObjectURL(file));
 
-      // Create a FormData object for the image
       const imageFormData = new FormData();
       imageFormData.append("file", file);
 
       try {
-        // Send the image to the backend
         const response = await POST("utils/upload-single-file", imageFormData);
 
-        // Check if the response contains the file URL
         if (response && response?.data?.image) {
-          // Update the form data with the received image URL
           setFormData((prevData) => ({
             ...prevData,
-            subcategory_image: response?.data?.image, // Store the Cloudinary URL
+            subcategory_image: response?.data?.image,
           }));
 
           Swal.fire({
@@ -96,7 +84,7 @@ const SubCategory = () => {
       const payload = {
         category: formData.category,
         sub_name: formData.sub_name,
-        subcategory_image: formData.subcategory_image, // This will now have the correct image URL
+        subcategory_image: formData.subcategory_image,
         description: formData.description,
       };
 
@@ -104,7 +92,6 @@ const SubCategory = () => {
       if (!res.error) {
         toast("Added Done");
         fetchData();
-        // Reset form after successful submission
         setFormData({
           category: "",
           sub_name: "",
@@ -121,16 +108,8 @@ const SubCategory = () => {
     }
   };
 
-  const [category, setCategoryId] = useState([]);
-
-  // ---------------- Get Data ------------------------
   const [categories, setCategories] = useState([]);
-
   const [subcategories, setSubCategories] = useState([]);
-
-  console.log(subcategories);
-
-  console.log(subcategories);
 
   const fetchData = async () => {
     GET("category/get-categories").then((result) => {
@@ -146,23 +125,28 @@ const SubCategory = () => {
     fetchData();
   }, []);
 
-  // const [delShow, setDelShow] = useState(false);
-  // const handleCloseDel = () => setDelShow(false);
-  // const handleShowDel = () => setDelShow(true);
-
-  // const delView = async (event, id) => {
-  //     GETID("category/finddelete", id, '').then((result) => {
-  //         setCategoryId(result);
-  //     });
-  //     handleShowDel();
-  // };
-
-  // const remove = async (event, id) => {
-  //     await DELETE("category/delete", id, "").then((result) => {
-  //         toast("Product deleted! ")
-  //         fetchData();
-  //     })
-  // };
+  const remove = async (event, id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await DELETE("subcategory/delete", id, "");
+          toast("Subcategory deleted!");
+          fetchData();
+        } catch (error) {
+          console.error("Error deleting subcategory:", error);
+          toast.error("Failed to delete subcategory. Please try again.");
+        }
+      }
+    });
+  };
 
   return (
     <div>
@@ -175,35 +159,36 @@ const SubCategory = () => {
 
       <Row>
         <Col sm={4}>
-          <Card className="">
+          <Card>
             <Card.Body>
               <Form>
                 <div className="row">
                   <Col md={12}>
-                    <Form.Group className="">
-                      <Form.Label> Category </Form.Label>
+                    <Form.Group>
+                      <Form.Label>Category</Form.Label>
                       <Form.Control
-                        className="form-control"
                         as="select"
-                        name="category" // Add this
+                        name="category"
                         onChange={handleInputChange}
                         value={formData.category}
                       >
                         <option value=""> --- Select --- </option>
                         {categories.map((category) => (
-                          <option value={category._id}>{category.name}</option>
+                          <option key={category._id} value={category._id}>
+                            {category.name}
+                          </option>
                         ))}
                       </Form.Control>
                     </Form.Group>
                   </Col>
 
                   <Col md={12}>
-                    <Form.Group className="">
-                      <Form.Label> Sub Category</Form.Label>
+                    <Form.Group>
+                      <Form.Label>Sub Category</Form.Label>
                       <Form.Control
                         type="text"
-                        placeholder="Product"
-                        name="sub_name" // Add this
+                        placeholder="Enter subcategory name"
+                        name="sub_name"
                         onChange={handleInputChange}
                         value={formData.sub_name}
                       />
@@ -211,12 +196,12 @@ const SubCategory = () => {
                   </Col>
 
                   <Col md={12}>
-                    <Form.Group className="">
-                      <Form.Label>Sub Category Description</Form.Label>
+                    <Form.Group>
+                      <Form.Label>Description</Form.Label>
                       <Form.Control
                         as="textarea"
-                        placeholder="Product"
-                        name="description" // Add this
+                        placeholder="Enter description"
+                        name="description"
                         onChange={handleInputChange}
                         value={formData.description}
                       />
@@ -224,8 +209,8 @@ const SubCategory = () => {
                   </Col>
 
                   <Col md={12}>
-                    <Form.Group className="">
-                      <Form.Label> Image </Form.Label>
+                    <Form.Group>
+                      <Form.Label>Image</Form.Label>
                       <FormControl type="file" onChange={handleImageChange} />
                     </Form.Group>
                   </Col>
@@ -249,26 +234,32 @@ const SubCategory = () => {
           </Card>
         </Col>
 
-        <Col sm={8} className="">
+        <Col sm={8}>
           <div className="card">
             <div className="card-body">
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    {/* <th>Category</th> */}
                     <th>Sub Category</th>
                     <th>Sub Cat Image</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {subcategories.map((subcategory) => (
-                    <tr>
-                      {/* <td>{subcategory.category.name}</td> */}
+                    <tr key={subcategory._id}>
                       <td>{subcategory.sub_name}</td>
                       <td>
                         <img
                           src={`${subcategory.subcategory_image}`}
                           style={{ width: "50px", height: "50px" }}
+                          alt="subcategory"
+                        />
+                      </td>
+                      <td>
+                        <AiFillDelete
+                          style={{ color: "red", cursor: "pointer" }}
+                          onClick={() => remove(null, subcategory._id)}
                         />
                       </td>
                     </tr>

@@ -123,12 +123,21 @@ const Category = () => {
     });
   };
 
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    category_image: "",
+  });
+
   useEffect(() => {
     fetchData();
   }, []);
 
   const handleEdit = (category) => {
     setSelectedCategory(category);
+    setEditFormData({
+      name: category.name,
+      category_image: category.category_image,
+    });
     setShowEditModal(true);
   };
 
@@ -185,6 +194,28 @@ const Category = () => {
     } catch (error) {
       console.error("Full error details:", error.response);
       toast.error(error.response?.data?.message || "Failed to update category");
+    }
+  };
+
+  const handleEditImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageFormData = new FormData();
+      imageFormData.append("file", file);
+
+      try {
+        const response = await POST("utils/upload-single-file", imageFormData);
+        if (response && response?.data?.image) {
+          setEditFormData((prev) => ({
+            ...prev,
+            category_image: response?.data?.image,
+          }));
+          toast.success("Image uploaded successfully!");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast.error("Failed to upload image");
+      }
     }
   };
 
@@ -306,9 +337,21 @@ const Category = () => {
             </Form.Group>
             <Form.Group>
               <Form.Label>Image</Form.Label>
-              <FormControl type="file" onChange={handleFileChange} />
+              <FormControl type="file" onChange={handleEditImageChange} />
             </Form.Group>
-            <Button variant="primary" onClick={confirmEdit}>
+            {editFormData.category_image && (
+              <img
+                src={editFormData.category_image}
+                alt="Preview"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  marginTop: "10px",
+                }}
+              />
+            )}
+            <Button variant="primary" onClick={confirmEdit} className="mt-3">
               Save changes
             </Button>
           </Form>
