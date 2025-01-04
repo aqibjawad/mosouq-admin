@@ -40,7 +40,6 @@ const ProfileForm = () => {
   const [formData, setFormData] = useState({
     category: "",
     subcategory: "",
-    businessName: "",
     city: "",
     address: "",
     country: "UAE",
@@ -53,6 +52,8 @@ const ProfileForm = () => {
     toTime: "",
     lang: "",
     lat: "",
+    seoTitle:"",
+    seoDescrp: "",
     businesshours: [],
   });
 
@@ -105,11 +106,10 @@ const ProfileForm = () => {
     }));
 
     // Debugging logs
-    console.log("Business Hours:", businesshours);
-    console.log(
-      "Business Hours (Stringified):",
-      JSON.stringify(businesshours, null, 2)
-    );
+    // console.log(
+    //   "Business Hours (Stringified):",
+    //   JSON.stringify(businesshours, null, 2)
+    // );
   }, [selectedDays, timeSlots]);
 
   useEffect(() => {
@@ -149,17 +149,6 @@ const ProfileForm = () => {
       }));
     }
   };
-
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     setImagePreview(URL.createObjectURL(file));
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       logo: file,
-  //     }));
-  //   }
-  // };
 
   const handleBusinessPicturesChange = (e) => {
     const files = Array.from(e.target.files);
@@ -331,7 +320,7 @@ const ProfileForm = () => {
         }
       );
 
-      console.log(profileResponse);
+      // console.log(profileResponse);
 
       setCurrentSection(5);
     } finally {
@@ -830,100 +819,100 @@ const ProfileForm = () => {
           </Row>
 
           <div>
-              <div className="business-prof-setup-head mt-5">
-                Business Address
-              </div>
-              <div className="business-prof-descrp">
-                Add your main office address if you have multiple locations
-              </div>
+            <div className="business-prof-setup-head mt-5">
+              Business Address
+            </div>
+            <div className="business-prof-descrp">
+              Add your main office address if you have multiple locations
+            </div>
 
-              <Row className="mt-5">
-                <Col>
-                  <div>
-                    <label htmlFor="city" className="label">
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      id="city"
-                      placeholder="Enter City"
-                      className="input-field"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </Col>
-                <Col>
-                  <div>
-                    <label htmlFor="zip" className="label">
-                      search address
-                    </label>
-                    <AddressPicker onPlaceSelected={handlePlaceSelected} />
-                  </div>
-                </Col>
-              </Row>
+            <Row className="mt-5">
+              <Col>
+                <div>
+                  <label htmlFor="city" className="label">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    name="city"
+                    id="city"
+                    placeholder="Enter City"
+                    className="input-field"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </Col>
+              <Col>
+                <div>
+                  <label htmlFor="zip" className="label">
+                    search address
+                  </label>
+                  <AddressPicker onPlaceSelected={handlePlaceSelected} />
+                </div>
+              </Col>
+            </Row>
 
-              <Row className="mt-2">
-                <Col lg={4}>
-                  <div>
-                    <label htmlFor="address" className="label">
-                      Address
-                    </label>
-                    <input
-                      type="text"
-                      name="address"
-                      id="address"
-                      placeholder="Enter Address"
-                      className="input-field"
-                      value={formData.address}
-                      onChange={(e) =>
-                        setFormData({ ...formData, address: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </Col>
-                <Col lg={4}>
-                  <div>
-                    <label htmlFor="country" className="label">
-                      Latitude
-                    </label>
-                    <input
-                      type="text"
-                      name="latitude"
-                      id="latitude"
-                      placeholder="Latitude"
-                      className="input-field"
-                      value={formData.lat}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lat: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </Col>
-                <Col lg={4}>
-                  <div>
-                    <label htmlFor="country" className="label">
-                      Longitude
-                    </label>
-                    <input
-                      type="text"
-                      name="longitude"
-                      id="longitude"
-                      placeholder="Longitude"
-                      className="input-field"
-                      value={formData.lang}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lang: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </Col>
-              </Row>
+            <Row className="mt-2">
+              <Col lg={4}>
+                <div>
+                  <label htmlFor="address" className="label">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    id="address"
+                    placeholder="Enter Address"
+                    className="input-field"
+                    value={formData.address}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+              <Col lg={4}>
+                <div>
+                  <label htmlFor="country" className="label">
+                    Latitude
+                  </label>
+                  <input
+                    type="text"
+                    name="latitude"
+                    id="latitude"
+                    placeholder="Latitude"
+                    className="input-field"
+                    value={formData.lat}
+                    onChange={(e) =>
+                      setFormData({ ...formData, lat: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+              <Col lg={4}>
+                <div>
+                  <label htmlFor="country" className="label">
+                    Longitude
+                  </label>
+                  <input
+                    type="text"
+                    name="longitude"
+                    id="longitude"
+                    placeholder="Longitude"
+                    className="input-field"
+                    value={formData.lang}
+                    onChange={(e) =>
+                      setFormData({ ...formData, lang: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+            </Row>
           </div>
 
           <Row className="mt-5">
@@ -951,16 +940,6 @@ const ProfileForm = () => {
                 <label htmlFor="description" className="label">
                   Description
                 </label>
-                {/* <textarea
-                  name="description"
-                  id="description"
-                  placeholder="Enter Description"
-                  className="text-field"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows={4}
-                  required
-                /> */}
                 <Editor
                   apiKey="q52q0lhptx8f862ep5ichss9wa4yfqjys86yeo2ltmbgwafj"
                   value={formData.description}
@@ -985,11 +964,11 @@ const ProfileForm = () => {
                     lists_indent_on_tab: true,
                     // Additional list-related configurations
                     content_style: `
-          ul { list-style-type: disc; margin-left: 20px; }
-          ol { list-style-type: decimal; margin-left: 20px; }
-          ul ul { list-style-type: circle; }
-          ol ol { list-style-type: lower-alpha; }
-        `,
+                      ul { list-style-type: disc; margin-left: 20px; }
+                      ol { list-style-type: decimal; margin-left: 20px; }
+                      ul ul { list-style-type: circle; }
+                      ol ol { list-style-type: lower-alpha; }
+                    `,
                   }}
                   onEditorChange={handleEditorChange}
                 />
@@ -1017,6 +996,38 @@ const ProfileForm = () => {
                   <option value="reservations"> Call Us </option>
                 </select>
               </div>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col lg={6} md={6} sm={12}>
+              <label htmlFor="website" className="label">
+                Seo Title
+              </label>
+              <input
+                type="text"
+                name="seoTitle"
+                id="seoTitle"
+                placeholder="Enter Title for seo"
+                className="input-field"
+                value={formData.seoTitle}
+                onChange={handleInputChange}
+              />
+            </Col>
+
+            <Col lg={6} md={6} sm={12}>
+              <label htmlFor="website" className="label">
+                SEO Description
+              </label>
+              <input
+                type="text"
+                name="seoDescrp"
+                id="seoDescrp"
+                placeholder="Enter SEO Description"
+                className="input-field"
+                value={formData.seoDescrp}
+                onChange={handleInputChange}
+              />
             </Col>
           </Row>
           <div className="business-prof-setup-head"> Select Your Hours </div>
