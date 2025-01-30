@@ -52,7 +52,7 @@ const ProfileForm = () => {
     toTime: "",
     lang: "",
     lat: "",
-    seoTitle:"",
+    seoTitle: "",
     seoDescrp: "",
     businesshours: [],
   });
@@ -950,25 +950,31 @@ const ProfileForm = () => {
                       "advlist autolink lists link image charmap print preview anchor",
                       "searchreplace visualblocks code fullscreen",
                       "insertdatetime media table paste code help wordcount",
-                      "lists", // Added lists plugin explicitly
+                      "lists",
+                      "fontsize", // Add fontsize plugin
                     ],
                     toolbar: [
-                      "undo redo | formatselect | bold italic backcolor",
+                      "undo redo | formatselect | fontsizeselect | bold italic backcolor", // Added fontsizeselect
                       "alignleft aligncenter alignright alignjustify",
                       "bullist numlist outdent indent | removeformat | help",
                     ].join(" | "),
-                    // List formatting options
-                    advlist_bullet_styles: "square circle disc",
-                    advlist_number_styles:
-                      "lower-alpha lower-roman decimal upper-alpha upper-roman",
-                    lists_indent_on_tab: true,
-                    // Additional list-related configurations
+                    fontsize_formats: "8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt",
                     content_style: `
-                      ul { list-style-type: disc; margin-left: 20px; }
-                      ol { list-style-type: decimal; margin-left: 20px; }
-                      ul ul { list-style-type: circle; }
-                      ol ol { list-style-type: lower-alpha; }
-                    `,
+        body { font-size: 14pt; }
+        ul { list-style-type: disc; margin-left: 20px; }
+        ol { list-style-type: decimal; margin-left: 20px; }
+        ul ul { list-style-type: circle; }
+        ol ol { list-style-type: lower-alpha; }
+      `,
+                    content_css: false,
+                    forced_root_block_attrs: {
+                      style: "font-size: 14pt",
+                    },
+                    // Set default font size
+                    font_size_style_values:
+                      "8pt,10pt,12pt,14pt,16pt,18pt,24pt,36pt",
+                    font_size_legacy_values:
+                      "8pt,10pt,12pt,14pt,16pt,18pt,24pt,36pt",
                   }}
                   onEditorChange={handleEditorChange}
                 />

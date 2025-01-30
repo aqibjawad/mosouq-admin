@@ -14,18 +14,18 @@ const BusinessHoursSelector = ({ onChange }) => {
 
   // Convert 12-hour format to 24-hour format
   const convertTo24Hour = (time12h) => {
-    const [time, modifier] = time12h.split(' ');
-    let [hours, minutes] = time.split(':');
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":");
     hours = parseInt(hours);
 
-    if (modifier === 'PM' && hours < 12) {
+    if (modifier === "PM" && hours < 12) {
       hours += 12;
     }
-    if (modifier === 'AM' && hours === 12) {
+    if (modifier === "AM" && hours === 12) {
       hours = 0;
     }
 
-    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+    return `${hours.toString().padStart(2, "0")}:${minutes}`;
   };
 
   useEffect(() => {
@@ -35,25 +35,53 @@ const BusinessHoursSelector = ({ onChange }) => {
       .map(([day, value]) => ({
         day: day.toLowerCase(),
         fromTime: convertTo24Hour(value.open),
-        toTime: convertTo24Hour(value.close)
+        toTime: convertTo24Hour(value.close),
       }));
 
     // Call onChange with formatted business hours
     onChange(businesshours);
   }, [selectedDays, onChange]);
 
-  const timeOptions = [];
-  for (let hour = 4; hour <= 23; hour++) {
-    for (let minute = 0; minute < 60; minute += 30) {
-      const time = new Date(2024, 0, 1, hour, minute);
-      const timeString = time.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-      timeOptions.push(timeString);
+  // Generate 24-hour AM time options
+  const generateAMTimes = () => {
+    const times = [];
+    for (let hour = 1; hour <= 12; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const timeString = `${hour}:${minute.toString().padStart(2, "0")} AM`;
+        times.push(timeString);
+      }
     }
-  }
+    // Add remaining 12 hours (13-24) but show them in AM format
+    for (let hour = 1; hour <= 12; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const timeString = `${hour}:${minute.toString().padStart(2, "0")} AM`;
+        times.push(timeString);
+      }
+    }
+    return times;
+  };
+
+  // Generate 24-hour PM time options
+  const generatePMTimes = () => {
+    const times = [];
+    for (let hour = 1; hour <= 12; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const timeString = `${hour}:${minute.toString().padStart(2, "0")} PM`;
+        times.push(timeString);
+      }
+    }
+    // Add remaining 12 hours (13-24) but show them in PM format
+    for (let hour = 1; hour <= 12; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const timeString = `${hour}:${minute.toString().padStart(2, "0")} PM`;
+        times.push(timeString);
+      }
+    }
+    return times;
+  };
+
+  const openTimeOptions = generateAMTimes();
+  const closeTimeOptions = generatePMTimes();
 
   const handleToggle = (day) => {
     setSelectedDays((prev) => ({
@@ -111,7 +139,7 @@ const BusinessHoursSelector = ({ onChange }) => {
                     handleTimeChange(key, "open", e.target.value)
                   }
                 >
-                  {timeOptions.map((time) => (
+                  {openTimeOptions.map((time) => (
                     <option key={`open-${time}`} value={time}>
                       {time}
                     </option>
@@ -129,7 +157,7 @@ const BusinessHoursSelector = ({ onChange }) => {
                     handleTimeChange(key, "close", e.target.value)
                   }
                 >
-                  {timeOptions.map((time) => (
+                  {closeTimeOptions.map((time) => (
                     <option key={`close-${time}`} value={time}>
                       {time}
                     </option>
