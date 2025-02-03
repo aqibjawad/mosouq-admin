@@ -1000,6 +1000,7 @@ const ProfileForm = () => {
                   </option>
                   <option value="reservations"> Rservations </option>
                   <option value="reservations"> Call Us </option>
+                  <option value="reservations"> Visit Us </option>
                 </select>
               </div>
             </Col>
