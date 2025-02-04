@@ -3,50 +3,57 @@ import { Row, Col, Form } from "react-bootstrap";
 
 const BusinessHoursSelector = ({ onChange }) => {
   const [selectedDays, setSelectedDays] = React.useState({
-    monday: { isOpen: true, open: "06:00", close: "17:00" },
-    tuesday: { isOpen: true, open: "06:00", close: "17:00" },
-    wednesday: { isOpen: true, open: "06:00", close: "17:00" },
-    thursday: { isOpen: true, open: "06:00", close: "17:00" },
-    friday: { isOpen: true, open: "06:00", close: "17:00" },
-    saturday: { isOpen: false, open: "06:00", close: "17:00" },
-    sunday: { isOpen: false, open: "06:00", close: "17:00" },
+    monday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    tuesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    wednesday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    thursday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    friday: { isOpen: true, open: "6:00 AM", close: "5:00 PM" },
+    saturday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
+    sunday: { isOpen: false, open: "6:00 AM", close: "5:00 PM" },
   });
 
+  // Convert 12-hour format to 24-hour format
+  const convertTo24Hour = (time12h) => {
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":");
+    hours = parseInt(hours);
+
+    if (modifier === "PM" && hours < 12) {
+      hours += 12;
+    }
+    if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, "0")}:${minutes}`;
+  };
+
   useEffect(() => {
+    // Format business hours for API
     const businesshours = Object.entries(selectedDays)
       .filter(([_, value]) => value.isOpen)
       .map(([day, value]) => ({
         day: day.toLowerCase(),
-        fromTime: value.open,
-        toTime: value.close,
+        fromTime: convertTo24Hour(value.open),
+        toTime: convertTo24Hour(value.close),
       }));
+
+    // Call onChange with formatted business hours
     onChange(businesshours);
   }, [selectedDays, onChange]);
 
-  // Convert 24h time to 12h format
-  const to12Hour = (time24) => {
-    const [hours, minutes] = time24.split(":");
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    const hour12 = hour % 12 || 12;
-    return `${hour12}:${minutes} ${ampm}`;
-  };
-
-  // Generate 24-hour time options
-  const generate24HourTimes = () => {
-    const times = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, "0")}:${minute
-          .toString()
-          .padStart(2, "0")}`;
-        times.push(timeString);
-      }
+  const timeOptions = [];
+  for (let hour = 4; hour <= 23; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const time = new Date(2024, 0, 1, hour, minute);
+      const timeString = time.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+      timeOptions.push(timeString);
     }
-    return times;
-  };
-
-  const timeOptions = generate24HourTimes();
+  }
 
   const handleToggle = (day) => {
     setSelectedDays((prev) => ({
@@ -106,7 +113,7 @@ const BusinessHoursSelector = ({ onChange }) => {
                 >
                   {timeOptions.map((time) => (
                     <option key={`open-${time}`} value={time}>
-                      {time} ({to12Hour(time)})
+                      {time}
                     </option>
                   ))}
                 </Form.Control>
@@ -124,7 +131,7 @@ const BusinessHoursSelector = ({ onChange }) => {
                 >
                   {timeOptions.map((time) => (
                     <option key={`close-${time}`} value={time}>
-                      {time} ({to12Hour(time)})
+                      {time}
                     </option>
                   ))}
                 </Form.Control>
