@@ -15,6 +15,8 @@ import {
 } from "react-bootstrap";
 import Swal from "sweetalert2";
 
+import { FaTrash } from "react-icons/fa";
+
 const Companies = () => {
   const [formData, setFormData] = useState({
     link: "",
@@ -32,7 +34,7 @@ const Companies = () => {
     const file = e.target.files[0];
     if (file) {
       setImagePreview(URL.createObjectURL(file));
-      setIsUploading(true); // Show the loader
+      setIsUploading(true);
 
       const imageFormData = new FormData();
       imageFormData.append("file", file);
@@ -61,7 +63,7 @@ const Companies = () => {
           text: "Failed to upload image. Please try again.",
         });
       } finally {
-        setIsUploading(false); // Hide the loader
+        setIsUploading(false);
       }
     }
   };
@@ -78,12 +80,46 @@ const Companies = () => {
       if (!res.error) {
         toast("Added successfully");
         fetchData();
+        // Clear form after successful submission
+        setFormData({
+          link: "",
+          companies_image: "",
+        });
+        setImagePreview("https://via.placeholder.com/150");
       } else {
         toast.error(res.sqlMessage);
       }
     } catch (error) {
       console.error("Error adding company:", error);
       toast.error("Failed to add company. Please try again.");
+    }
+  };
+
+  const handleDelete = async (companyId) => {
+    try {
+      // Show confirmation dialog
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+
+      if (result.isConfirmed) {
+        const res = await POST("company/delete-company", { id: companyId });
+        if (!res.error) {
+          toast.success("Company deleted successfully");
+          fetchData(); // Refresh the list
+        } else {
+          toast.error(res.sqlMessage || "Failed to delete company");
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting company:", error);
+      toast.error("Failed to delete company. Please try again.");
     }
   };
 
@@ -138,7 +174,7 @@ const Companies = () => {
                       <FormControl
                         type="file"
                         onChange={handleImageChange}
-                        disabled={isUploading} // Disable during upload
+                        disabled={isUploading}
                       />
                     </InputGroup>
                     {isUploading && (
@@ -158,7 +194,7 @@ const Companies = () => {
                         type="submit"
                         size="lg"
                         block
-                        disabled={isUploading} // Disable during upload
+                        disabled={isUploading}
                       >
                         Submit
                       </Button>
@@ -178,6 +214,7 @@ const Companies = () => {
                   <tr>
                     <th>Company Link</th>
                     <th>Image</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -190,6 +227,16 @@ const Companies = () => {
                           style={{ width: "50px", height: "50px" }}
                           alt="Company"
                         />
+                      </td>
+                      <td style={{cursor:"pointer"}}>
+                        {/* <Button
+                          variant="danger"
+                          size="sm"
+                          
+                        >
+                          Delete
+                        </Button> */}
+                        <FaTrash onClick={() => handleDelete(company._id)} />
                       </td>
                     </tr>
                   ))}
