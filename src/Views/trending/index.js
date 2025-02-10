@@ -17,6 +17,8 @@ const ProfileForm = () => {
   const token = localStorage.getItem("token");
   const data = jwtDecode(token);
 
+  const [inputValue, setInputValue] = useState("");
+  const [inputTags, setInputTags] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [subCategoryOptions, setSubCategoryOptions] = useState([]);
   const [currentSection, setCurrentSection] = useState(1);
@@ -55,6 +57,7 @@ const ProfileForm = () => {
     seoTitle: "",
     seoDescrp: "",
     businesshours: [],
+    tags: [],
   });
 
   const [selectedDays, setSelectedDays] = useState({
@@ -628,6 +631,66 @@ const ProfileForm = () => {
     }
   };
 
+  const handleMultiInputChange = (e) => {
+    const value = e.target.value;
+    if (value.includes(",")) {
+      const newTags = value
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== "" && !inputTags.includes(tag));
+
+      setInputTags([...inputTags, ...newTags]);
+      setInputValue("");
+
+      // Update formData with new tags
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...inputTags, ...newTags],
+      }));
+    } else {
+      setInputValue(value);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Backspace" && inputValue === "" && inputTags.length > 0) {
+      const newTags = [...inputTags];
+      newTags.pop();
+      setInputTags(newTags);
+
+      // Update formData when tag is removed
+      setFormData((prev) => ({
+        ...prev,
+        tags: newTags,
+      }));
+    }
+    if (e.key === "Enter" && inputValue.trim() !== "") {
+      if (!inputTags.includes(inputValue.trim())) {
+        const newTags = [...inputTags, inputValue.trim()];
+        setInputTags(newTags);
+
+        // Update formData when new tag is added
+        setFormData((prev) => ({
+          ...prev,
+          tags: newTags,
+        }));
+      }
+      setInputValue("");
+      e.preventDefault();
+    }
+  };
+
+  const removeTag = (indexToRemove) => {
+    const newTags = inputTags.filter((_, index) => index !== indexToRemove);
+    setInputTags(newTags);
+
+    // Update formData when tag is removed
+    setFormData((prev) => ({
+      ...prev,
+      tags: newTags,
+    }));
+  };
+
   return (
     <div className="main-profile-head mt-5">
       {currentSection === 1 && (
@@ -960,12 +1023,12 @@ const ProfileForm = () => {
                     ].join(" | "),
                     fontsize_formats: "8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt",
                     content_style: `
-        body { font-size: 14pt; }
-        ul { list-style-type: disc; margin-left: 20px; }
-        ol { list-style-type: decimal; margin-left: 20px; }
-        ul ul { list-style-type: circle; }
-        ol ol { list-style-type: lower-alpha; }
-      `,
+                      body { font-size: 14pt; }
+                      ul { list-style-type: disc; margin-left: 20px; }
+                      ol { list-style-type: decimal; margin-left: 20px; }
+                      ul ul { list-style-type: circle; }
+                      ol ol { list-style-type: lower-alpha; }
+                    `,
                     content_css: false,
                     forced_root_block_attrs: {
                       style: "font-size: 14pt",
@@ -1037,6 +1100,64 @@ const ProfileForm = () => {
               />
             </Col>
           </Row>
+
+          <div className="card-body">
+            <div className="form-group">
+              <div className="border rounded p-2 d-flex flex-wrap gap-2 min-vh-25">
+                {inputTags.map(
+                  (
+                    tag,
+                    index // Changed from tags to inputTags
+                  ) => (
+                    <span
+                      key={index}
+                      className="badge bg-primary d-flex align-items-center p-2 text-white position-relative"
+                      style={{ gap: "5px" }}
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        className="btn-close btn-close-white"
+                        onClick={() => removeTag(index)}
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          opacity: 0.75,
+                          position: "relative",
+                          right: 0,
+                          transition: "opacity 0.2s ease-in-out",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.opacity = "1")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.opacity = "0.75")
+                        }
+                      ></button>
+                    </span>
+                  )
+                )}
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={handleMultiInputChange}
+                  onKeyDown={handleKeyDown}
+                  className="form-control border-0 flex-grow-1 p-0"
+                  style={{ minWidth: "120px", boxShadow: "none" }}
+                  placeholder={
+                    inputTags.length === 0 // Changed from tags to inputTags
+                      ? "Type and press enter or comma to add tags"
+                      : ""
+                  }
+                />
+              </div>
+              <small className="form-text text-muted mt-2">
+                Press enter or type comma to create a tag. Press backspace to
+                remove the last tag.
+              </small>
+            </div>
+          </div>
+
           <div className="business-prof-setup-head"> Select Your Hours </div>
 
           <div className="w-full max-w-2xl mx-auto p-6 space-y-6">

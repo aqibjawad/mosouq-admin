@@ -36,9 +36,7 @@ const BusinessShow = () => {
     setShowViewModal(true);
   };
 
-  const filteredBusiness = business.filter((item) =>
-    item.businessName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredBusiness = business.filter((item) => item.businessName);
 
   return (
     <Container fluid className="mt-4">

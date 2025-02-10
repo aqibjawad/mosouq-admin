@@ -23,21 +23,6 @@ const SideBar = () => {
   };
 
   const menuItems = [
-    {
-      id: 1,
-      to: "/dashboard",
-      text: "Dashboard",
-      icon: <LuLayoutDashboard className="menu-item-icon" />,
-    },
-    {
-      id: 9,
-      to: "/business-pricing",
-      text: "Pricing",
-      icon: <IoPricetagOutline />,
-    },
-
-    { id: 10, to: "/int-logo", text: "Business Logo" },
-    { id: 11, to: "/comp-logo", text: "Business Logo" },
     { id: 8, to: "/blog", text: "Blog", icon: <FaBlog /> },
     {
       id: 7,
@@ -52,8 +37,20 @@ const SideBar = () => {
   return (
     <div className="sidebar col-2">
       <ul className="list-unstyled user-menubar">
+        <li
+          className={`${active === 3 ? "active-list" : ""}`}
+          onClick={() => setActive(3)}
+        >
+          <Link to="/dashboard" className="menu-item">
+            <div className="menu-item-text">Dashboard</div>
+          </Link>
+        </li>
 
-        <li style={{cursor:"pointer"}} onClick={() => toggleDropdown("categories")}>
+        {/* Categories List  */}
+        <li
+          style={{ cursor: "pointer" }}
+          onClick={() => toggleDropdown("categories")}
+        >
           <div className="menu-item">
             <span className="d-flex">
               <BiCategory style={{ marginTop: "20px", marginRight: "10px" }} />
@@ -82,7 +79,11 @@ const SideBar = () => {
           )}
         </li>
 
-        <li style={{cursor:"pointer"}} onClick={() => toggleDropdown("businesses")}>
+        {/* Business list */}
+        <li
+          style={{ cursor: "pointer" }}
+          onClick={() => toggleDropdown("businesses")}
+        >
           <div className="menu-item">
             <span className="d-flex">
               <IoIosBusiness
@@ -93,14 +94,6 @@ const SideBar = () => {
           </div>
           {expanded.businesses && (
             <ul className="list-unstyled">
-              <li
-                className={`${active === 4 ? "active-list" : ""}`}
-                onClick={() => setActive(4)}
-              >
-                <Link to="/companies" className="menu-item">
-                  <div className="menu-item-text">Trusted Companies</div>
-                </Link>
-              </li>
               <li
                 className={`${active === 5 ? "active-list" : ""}`}
                 onClick={() => setActive(5)}
@@ -120,23 +113,16 @@ const SideBar = () => {
               </li>
 
               <li
-                className={`${active === 6 ? "active-list" : ""}`}
-                onClick={() => setActive(6)}
+                className={`${active === 5 ? "active-list" : ""}`}
+                onClick={() => setActive(5)}
               >
-                <Link to="/deals" className="menu-item">
-                  <div className="menu-item-text">Deals</div>
-                </Link>
-              </li>
-              <li
-                className={`${active === 7 ? "active-list" : ""}`}
-                onClick={() => setActive(7)}
-              >
-                <Link to="/dubai" className="menu-item">
-                  <div className="menu-item-text">Dubai</div>
+                <Link to="/business-show" className="menu-item">
+                  <div className="menu-item-text"> Add Faqs </div>
                 </Link>
               </li>
             </ul>
           )}
+
           <li
             className={`${active === 7 ? "active-list" : ""}`}
             onClick={() => setActive(7)}
@@ -165,22 +151,122 @@ const SideBar = () => {
           </li>
         </li>
 
-        {menuItems.map((item) => (
+        {/* deals list */}
+        <li
+          style={{ cursor: "pointer" }}
+          onClick={() => toggleDropdown("deals")}
+        >
+          <div className="menu-item">
+            <span className="d-flex">
+              <IoIosBusiness
+                style={{ marginTop: "20px", marginRight: "10px" }}
+              />
+              <div className="menu-item-text">Deals</div>
+            </span>
+          </div>
+          {expanded.businesses && (
+            <ul className="list-unstyled">
+              <li
+                className={`${active === 5 ? "active-list" : ""}`}
+                onClick={() => setActive(5)}
+              >
+                <Link to="/deals" className="menu-item">
+                  <div className="menu-item-text">Add Deals</div>
+                </Link>
+              </li>
+
+              <li
+                className={`${active === 5 ? "active-list" : ""}`}
+                onClick={() => setActive(5)}
+              >
+                <Link to="/deals" className="menu-item">
+                  <div className="menu-item-text">Show Deals</div>
+                </Link>
+              </li>
+            </ul>
+          )}
+
           <li
-            key={item.id}
-            className={`${active === item.id ? "active-list" : ""}`}
-            onClick={() => setActive(item.id)}
+            className={`${active === 7 ? "active-list" : ""}`}
+            onClick={() => setActive(7)}
           >
-            <Link to={item.to} className="menu-item">
-              <span className="d-flex">
-                <div style={{ paddingTop: "20px", marginRight: "10px" }}>
-                  {item.icon}
-                </div>
-                <div className="menu-item-text">{item.text}</div>
-              </span>
+            <Link to="/add-staff" className="menu-item">
+              <div className="menu-item-text"> Add Staff </div>
             </Link>
           </li>
-        ))}
+
+          <li
+            className={`${active === 7 ? "active-list" : ""}`}
+            onClick={() => setActive(7)}
+          >
+            <Link to="/users" className="menu-item">
+              <div className="menu-item-text"> Users </div>
+            </Link>
+          </li>
+
+          <li
+            className={`${active === 7 ? "active-list" : ""}`}
+            onClick={() => setActive(7)}
+          >
+            <Link to="/reviews" className="menu-item">
+              <div className="menu-item-text"> Reviews </div>
+            </Link>
+          </li>
+        </li>
+
+        <li
+          className={`${active === 4 ? "active-list" : ""}`}
+          onClick={() => setActive(4)}
+        >
+          <Link to="/companies" className="menu-item">
+            <div className="menu-item-text">Trusted Companies</div>
+          </Link>
+        </li>
+
+        <li
+          className={`${active === 6 ? "active-list" : ""}`}
+          onClick={() => setActive(6)}
+        >
+          <Link to="/deals" className="menu-item">
+            <div className="menu-item-text">Reviews</div>
+          </Link>
+        </li>
+
+        <li
+          className={`${active === 6 ? "active-list" : ""}`}
+          onClick={() => setActive(6)}
+        >
+          <Link to="/analytics" className="menu-item">
+            <div className="menu-item-text">Analytics</div>
+          </Link>
+        </li>
+
+        <li
+          className={`${active === 6 ? "active-list" : ""}`}
+          onClick={() => setActive(6)}
+        >
+          <Link to="/business-pricing" className="menu-item">
+            <div className="menu-item-text">Pricing</div>
+          </Link>
+        </li>
+
+        <li
+          className={`${active === 6 ? "active-list" : ""}`}
+          onClick={() => setActive(6)}
+        >
+          <Link to="/business-pricing" className="menu-item">
+            <div className="menu-item-text">Add Staff</div>
+          </Link>
+        </li>
+
+        <li
+          className={`${active === 6 ? "active-list" : ""}`}
+          onClick={() => setActive(6)}
+        >
+          <Link to="/business-pricing" className="menu-item">
+            <div className="menu-item-text">Settings</div>
+          </Link>
+        </li>
       </ul>
     </div>
   );
