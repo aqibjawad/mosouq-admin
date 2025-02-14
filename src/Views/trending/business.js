@@ -11,7 +11,7 @@ const BusinessShow = () => {
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
+  useEffect(() => { 
     GET("business-profile/getAll").then((result) => {
       setBusiness(result.businessProfiles);
     });

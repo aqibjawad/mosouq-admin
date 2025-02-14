@@ -116,7 +116,7 @@ const SideBar = () => {
                 className={`${active === 5 ? "active-list" : ""}`}
                 onClick={() => setActive(5)}
               >
-                <Link to="/business-show" className="menu-item">
+                <Link to="/add-faqs" className="menu-item">
                   <div className="menu-item-text"> Add Faqs </div>
                 </Link>
               </li>

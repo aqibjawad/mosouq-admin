@@ -44,6 +44,8 @@ import Analytics from "../Views/analytics"
 
 import BusinessShow from "../Views/trending/business"
 
+import AddFaqs from "../Views/faqs/add"
+
 const routes =[  
 
     {path:'/', element:<WelcomePage />, exact:'true', type:'public' },
@@ -92,6 +94,8 @@ const routes =[
     {path:'/analytics', element:<Analytics />, exact:'true', type:'private' },
 
     {path:'/business-show', element:<BusinessShow />, exact:'true', type:'private' },
+
+    {path:'/add-faqs', element:<AddFaqs />, exact:'true', type:'private' },
 
 ]
 
